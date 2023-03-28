@@ -1,11 +1,14 @@
 package com.company;
 
-import java.util.LinkedHashMap;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 public class BinaryTree<T extends Comparable<T>> {
     private BinaryTreeNode<T> root;
+
+    private final long placeholderLength = 2; // hardcoded for now
 
     public BinaryTree() {
         this.root = null;
@@ -13,7 +16,7 @@ public class BinaryTree<T extends Comparable<T>> {
 
     public void add(T value) {
         if (root == null) {
-            root = new BinaryTreeNode<>(null, value, 0);
+            root = new BinaryTreeNode<>(null, value, 0, 0);
         } else {
             add(root, value);
         }
@@ -22,30 +25,29 @@ public class BinaryTree<T extends Comparable<T>> {
     private long add(BinaryTreeNode<T> node, T value) {
         T nodeValue = node.getValue();
         if (nodeValue.compareTo(value) > 0) {
-            //go left
+            // go left
             if (node.getLeft() != null) {
-                long underlyingHeight = add(node.getLeft(), value);
-                if (underlyingHeight >= node.getHeight()) {
-                    node.setHeight(underlyingHeight + 1);
-                }
+                long underlyingDepth = add(node.getLeft(), value);
+                node.updateDepthIfGreater(underlyingDepth + 1);
             } else {
                 node.setLeft(new BinaryTreeNode<>(node, value, 0));
-                node.setHeight(1);
+                node.updateDepthIfGreater(1);
             }
         }
-        if (nodeValue.compareTo(value) <= 0) {
-            //go right
+        if (nodeValue.compareTo(value) < 0) {
+            // go right
             if (node.getRight() != null) {
-                long underlyingHeight = add(node.getRight(), value);
-                if (underlyingHeight >= node.getHeight()) {
-                    node.setHeight(underlyingHeight + 1);
-                }
+                long underlyingDepth = add(node.getRight(), value);
+                node.updateDepthIfGreater(underlyingDepth + 1);
             } else {
                 node.setRight(new BinaryTreeNode<>(node, value, 0));
-                node.setHeight(1);
+                node.updateDepthIfGreater(1);
             }
         }
-        return node.getHeight();
+        if (nodeValue.compareTo(value) == 0) {
+            // handle duplicates later
+        }
+        return node.getDepth();
     }
 
     public void remove(T value) {
@@ -57,55 +59,69 @@ public class BinaryTree<T extends Comparable<T>> {
     }
 
     public void printTree() {
-        Map<Long, StringBuilder> levelsMap = new LinkedHashMap<>();
-        walkthrough(root, node -> {
-            StringBuilder thisLevelStringBuilder = levelsMap.computeIfAbsent(node.getHeight(), any -> new StringBuilder());
-            BinaryTreeNode<T> parent = node.getParent();
-            if (parent != null) {
-                if (parent.getRight() == node) {
-                    if (parent.getLeft() == null) {
-                        thisLevelStringBuilder.append("\t").append(String.format("%04d", 0)).append("\t");
-                    } else {
-                        //do nothing
-                    }
-                }
-                thisLevelStringBuilder.append("\t").append(String.format("%04d", node.getValue())).append("\t");
-                if (parent.getLeft() == node) {
-                    if (parent.getRight() == null) {
-                        thisLevelStringBuilder.append("\t").append(String.format("%04d", 0)).append("\t");
-                    } else {
-                        //do nothing
-                    }
-                }
-
-            } else {
-                thisLevelStringBuilder.append("\t").append(String.format("%04d", node.getValue())).append("\t");
-            }
-            levelsMap.put(node.getHeight(), thisLevelStringBuilder);
-            return null;
+        Map<Long, StringBuilder> levelsMap = initLevelsMapWithMargins();
+        walkthrough(root, levelsMap, node -> {
+            long level = node.getLevel();
+            StringBuilder thisLevelStringBuilder = levelsMap.get(level);
+            thisLevelStringBuilder.append(String.format("%02d", node.getValue()))
+                    .append(multiply(" ", calculatePadding(root.getDepth() - level) * placeholderLength));
         });
         levelsMap.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey((l1, l2) -> Long.compare(l2, l1)))
-                .forEach(entry -> System.out.println(entry.getKey() + "\t\t\t" + multiply("\t\t", entry.getKey()) + entry.getValue().toString()));
+                .sorted(Map.Entry.comparingByKey(Comparator.comparingLong(l -> l)))
+                .forEach(entry -> System.out.println(entry.getKey() + "\t" + entry.getValue().toString()));
     }
 
-    private void walkthrough(BinaryTreeNode<T> node, Function<BinaryTreeNode<T>, ?> function) {
-        function.apply(node);//visit node
+    private Map<Long, StringBuilder> initLevelsMapWithMargins() {
+        Map<Long, StringBuilder> levelsMap = new HashMap<>();
+        for (long i = 0; i < root.getDepth(); i++) {
+            StringBuilder sb = new StringBuilder();
+            long margin = calculatePadding((root.getDepth() - i) - 1); // margin for current level == padding for next level
+            sb.append(multiply(" ", margin * placeholderLength));
+            levelsMap.put(i, sb);
+        }
+        levelsMap.put(root.getDepth(), new StringBuilder()); // no margin for last level
+        return levelsMap;
+    }
+
+    private long calculatePadding(long invertedLevel) {
+        if (invertedLevel == 0) {
+            return 1;
+        }
+        return calculatePadding(invertedLevel - 1) * 2 + 1;
+    }
+
+    private void walkthrough(BinaryTreeNode<T> node, Map<Long, StringBuilder> levelsMap, Consumer<BinaryTreeNode<T>> function) {
+        function.accept(node); // visit node
 
         if (node.getLeft() != null) {
-            walkthrough(node.getLeft(), function);
+            walkthrough(node.getLeft(), levelsMap, function);
+        } else if (node.getLevel() < root.getDepth()) {
+            addPaddingsInsteadOfNullNodes(node.getLevel() + 1, levelsMap);
         }
 
         if (node.getRight() != null) {
-            walkthrough(node.getRight(), function);
+            walkthrough(node.getRight(), levelsMap, function);
+        } else if (node.getLevel() < root.getDepth()) {
+            addPaddingsInsteadOfNullNodes(node.getLevel() + 1, levelsMap);
+        }
+    }
+
+    private void addPaddingsInsteadOfNullNodes(long levelOfNullNode, Map<Long, StringBuilder> levelsMap) {
+        long treeDepth = root.getDepth();
+        long childMultiplier = 1;
+        for (long i = levelOfNullNode; i <= treeDepth; i++) {
+            StringBuilder sb = levelsMap.get(i);
+            long padding = (1 + calculatePadding(treeDepth - i)) * childMultiplier; // (node itself + padding for current level) * number of possible nodes in following subtrees
+            sb.append(multiply(" ", padding * placeholderLength));
+            childMultiplier *= 2;
         }
     }
 
     private String multiply(String string, long times) {
-        String result = string;
-        for (long i = 0; i <= times; i++) {
-            result = result + string;
+        StringBuilder result = new StringBuilder();
+        for (long i = 0; i < times; i++) {
+            result.append(string);
         }
-        return result;
+        return result.toString();
     }
 }

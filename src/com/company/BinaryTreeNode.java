@@ -7,20 +7,31 @@ public class BinaryTreeNode<T> {
     private BinaryTreeNode<T> right;
     private BinaryTreeNode<T> left;
 
-    private long height;
+    private long level; // level relative to the whole tree
+    private long depth; // depth of node's subtree
 
-    public BinaryTreeNode(BinaryTreeNode<T> parent, T value, BinaryTreeNode<T> right, BinaryTreeNode<T> left) {
+
+    public BinaryTreeNode(BinaryTreeNode<T> parent, T value, long depth) {
         this.parent = parent;
         this.value = value;
-        this.right = right;
-        this.left = left;
+        this.depth = depth;
+        this.level = parent.level + 1;
     }
 
-    public BinaryTreeNode(BinaryTreeNode<T> parent, T value, long height) {
+    public BinaryTreeNode(BinaryTreeNode<T> parent, T value, long depth, long level) {
         this.parent = parent;
         this.value = value;
-        this.height = height;
+        this.depth = depth;
+        this.level = level;
     }
+
+
+    public void updateDepthIfGreater(long newDepth) {
+        if (newDepth > getDepth()) {
+            setDepth(newDepth);
+        }
+    }
+
 
     public BinaryTreeNode<T> getParent() {
         return parent;
@@ -54,11 +65,19 @@ public class BinaryTreeNode<T> {
         this.left = left;
     }
 
-    public long getHeight() {
-        return height;
+    public long getLevel() {
+        return level;
     }
 
-    public void setHeight(long height) {
-        this.height = height;
+    public void setLevel(long level) {
+        this.level = level;
+    }
+
+    public long getDepth() {
+        return depth;
+    }
+
+    public void setDepth(long depth) {
+        this.depth = depth;
     }
 }
