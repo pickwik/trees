@@ -12,13 +12,13 @@ public class BinaryTree<T extends Comparable<T>> {
 
     public void add(T value) {
         if (root == null) {
-            root = new BinaryTreeNode<>(null, value, 0, 0);
+            root = new BinaryTreeNode<>(null, value, 0);
         } else {
             addRecursive(root, value);
         }
     }
 
-    private long addRecursive(BinaryTreeNode<T> node, T value) {
+    private void addRecursive(BinaryTreeNode<T> node, T value) {
         T nodeValue = node.getValue();
         if (nodeValue.compareTo(value) == 0) {
             // handle duplicates later
@@ -26,24 +26,19 @@ public class BinaryTree<T extends Comparable<T>> {
         if (nodeValue.compareTo(value) > 0) {
             // go left
             if (node.getLeft() != null) {
-                long underlyingDepth = addRecursive(node.getLeft(), value);
-                node.updateDepthIfGreater(underlyingDepth + 1);
+                addRecursive(node.getLeft(), value);
             } else {
-                node.setLeft(new BinaryTreeNode<>(node, value, 0));
-                node.updateDepthIfGreater(1);
+                node.setLeft(new BinaryTreeNode<>(node, value));
             }
         }
         if (nodeValue.compareTo(value) < 0) {
             // go right
             if (node.getRight() != null) {
-                long underlyingDepth = addRecursive(node.getRight(), value);
-                node.updateDepthIfGreater(underlyingDepth + 1);
+                addRecursive(node.getRight(), value);
             } else {
-                node.setRight(new BinaryTreeNode<>(node, value, 0));
-                node.updateDepthIfGreater(1);
+                node.setRight(new BinaryTreeNode<>(node, value));
             }
         }
-        return node.getDepth();
     }
 
 
@@ -86,7 +81,7 @@ public class BinaryTree<T extends Comparable<T>> {
         } else {
             parent.setRight(child);
         }
-        updateNodeLevels(child, node.getLevel());
+        updateNodeLevelsRecursive(child, node.getLevel());
     }
 
     private void removeNodeWithTwoChildNodes(BinaryTreeNode<T> node) {
@@ -129,7 +124,8 @@ public class BinaryTree<T extends Comparable<T>> {
 
 
     public void printTree() {
-        new TreePrinter<>(root).print();
+        long treeDepth = calculateDepthRecursive(root);
+        new TreePrinter<>(root, treeDepth).print();
     }
 
 
@@ -143,16 +139,25 @@ public class BinaryTree<T extends Comparable<T>> {
         }
     }
 
+    private long calculateDepthRecursive(BinaryTreeNode<T> node) {
+        if (node == null) {
+            return -1;
+        }
+        long lDepth = calculateDepthRecursive(node.getLeft());
+        long rDepth = calculateDepthRecursive(node.getRight());
+        return Math.max(lDepth, rDepth) + 1;
+    }
+
     /**
      * Updates level values starting from provided node
      */
-    private void updateNodeLevels(BinaryTreeNode<T> node, long levelValue) {
+    private void updateNodeLevelsRecursive(BinaryTreeNode<T> node, long levelValue) {
         node.setLevel(levelValue++);
         if (node.getLeft() != null) {
-            updateNodeLevels(node.getLeft(), levelValue);
+            updateNodeLevelsRecursive(node.getLeft(), levelValue);
         }
         if (node.getRight() != null) {
-            updateNodeLevels(node.getRight(), levelValue);
+            updateNodeLevelsRecursive(node.getRight(), levelValue);
         }
     }
 

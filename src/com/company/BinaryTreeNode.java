@@ -1,6 +1,7 @@
 package com.company;
 
 public class BinaryTreeNode<T> {
+
     private BinaryTreeNode<T> parent;
     private T value;
 
@@ -8,28 +9,18 @@ public class BinaryTreeNode<T> {
     private BinaryTreeNode<T> left;
 
     private long level; // level relative to the whole tree
-    private long depth; // depth of node's subtree
 
 
-    public BinaryTreeNode(BinaryTreeNode<T> parent, T value, long depth) {
+    public BinaryTreeNode(BinaryTreeNode<T> parent, T value) {
         this.parent = parent;
         this.value = value;
-        this.depth = depth;
         this.level = parent.level + 1;
     }
 
-    public BinaryTreeNode(BinaryTreeNode<T> parent, T value, long depth, long level) {
+    public BinaryTreeNode(BinaryTreeNode<T> parent, T value, long level) {
         this.parent = parent;
         this.value = value;
-        this.depth = depth;
         this.level = level;
-    }
-
-
-    public void updateDepthIfGreater(long newDepth) {
-        if (newDepth > getDepth()) {
-            setDepth(newDepth);
-        }
     }
 
 
@@ -71,13 +62,5 @@ public class BinaryTreeNode<T> {
 
     public void setLevel(long level) {
         this.level = level;
-    }
-
-    public long getDepth() {
-        return depth;
-    }
-
-    public void setDepth(long depth) {
-        this.depth = depth;
     }
 }

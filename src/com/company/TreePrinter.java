@@ -9,11 +9,13 @@ public class TreePrinter<T> {
 
     private final BinaryTreeNode<T> root;
     private final long placeholderLength = 2; // hardcoded for now
+    private final long treeDepth;
     private final Map<Long, StringBuilder> levelsMap;
 
 
-    public TreePrinter(BinaryTreeNode<T> root) {
+    public TreePrinter(BinaryTreeNode<T> root, long treeDepth) {
         this.root = root;
+        this.treeDepth = treeDepth;
         levelsMap = initLevelsMapWithMargins();
     }
 
@@ -23,7 +25,7 @@ public class TreePrinter<T> {
             long level = node.getLevel();
             StringBuilder thisLevelStringBuilder = levelsMap.get(level);
             thisLevelStringBuilder.append(String.format("%02d", node.getValue()))
-                    .append(multiply(" ", calculatePadding(root.getDepth() - level) * placeholderLength));
+                    .append(multiply(" ", calculatePadding(treeDepth - level) * placeholderLength));
         });
         levelsMap.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey(Comparator.comparingLong(l -> l)))
@@ -35,31 +37,30 @@ public class TreePrinter<T> {
 
         if (node.getLeft() != null) {
             walkthrough(node.getLeft(), function);
-        } else if (node.getLevel() < root.getDepth()) {
+        } else if (node.getLevel() < treeDepth) {
             addPaddingsInsteadOfNullNodes(node.getLevel() + 1);
         }
 
         if (node.getRight() != null) {
             walkthrough(node.getRight(), function);
-        } else if (node.getLevel() < root.getDepth()) {
+        } else if (node.getLevel() < treeDepth) {
             addPaddingsInsteadOfNullNodes(node.getLevel() + 1);
         }
     }
 
     private Map<Long, StringBuilder> initLevelsMapWithMargins() {
         Map<Long, StringBuilder> levelsMap = new HashMap<>();
-        for (long i = 0; i < root.getDepth(); i++) {
+        for (long i = 0; i < treeDepth; i++) {
             StringBuilder sb = new StringBuilder();
-            long margin = calculatePadding((root.getDepth() - i) - 1); // margin for current level == padding for next level
+            long margin = calculatePadding((treeDepth - i) - 1); // margin for current level == padding for next level
             sb.append(multiply(" ", margin * placeholderLength));
             levelsMap.put(i, sb);
         }
-        levelsMap.put(root.getDepth(), new StringBuilder()); // no margin for last level
+        levelsMap.put(treeDepth, new StringBuilder()); // no margin for last level
         return levelsMap;
     }
 
     private void addPaddingsInsteadOfNullNodes(long levelOfNullNode) {
-        long treeDepth = root.getDepth();
         long childMultiplier = 1;
         for (long i = levelOfNullNode; i <= treeDepth; i++) {
             StringBuilder sb = levelsMap.get(i);
