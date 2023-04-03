@@ -4,6 +4,7 @@ public class BinaryTreeNode<T> {
 
     private BinaryTreeNode<T> parent;
     private T value;
+    private long numberOfDuplicates;
 
     private BinaryTreeNode<T> right;
     private BinaryTreeNode<T> left;
@@ -14,12 +15,14 @@ public class BinaryTreeNode<T> {
     public BinaryTreeNode(BinaryTreeNode<T> parent, T value) {
         this.parent = parent;
         this.value = value;
+        this.numberOfDuplicates = 0;
         this.level = parent.level + 1;
     }
 
     public BinaryTreeNode(BinaryTreeNode<T> parent, T value, long level) {
         this.parent = parent;
         this.value = value;
+        this.numberOfDuplicates = 0;
         this.level = level;
     }
 
@@ -38,6 +41,14 @@ public class BinaryTreeNode<T> {
 
     public void setValue(T value) {
         this.value = value;
+    }
+
+    public long getNumberOfDuplicates() {
+        return numberOfDuplicates;
+    }
+
+    public void setNumberOfDuplicates(long numberOfDuplicates) {
+        this.numberOfDuplicates = numberOfDuplicates;
     }
 
     public BinaryTreeNode<T> getRight() {

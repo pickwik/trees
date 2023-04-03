@@ -21,7 +21,7 @@ public class BinaryTree<T extends Comparable<T>> {
     private void addRecursive(BinaryTreeNode<T> node, T value) {
         T nodeValue = node.getValue();
         if (nodeValue.compareTo(value) == 0) {
-            // handle duplicates later
+            node.setNumberOfDuplicates(node.getNumberOfDuplicates() + 1);
         }
         if (nodeValue.compareTo(value) > 0) {
             // go left
@@ -44,7 +44,12 @@ public class BinaryTree<T extends Comparable<T>> {
 
     public void remove(T value) {
         BinaryTreeNode<T> nodeToRemove = search(value);
-        removeNode(nodeToRemove);
+        long numberOfDuplicates = nodeToRemove.getNumberOfDuplicates();
+        if (numberOfDuplicates > 0) {
+            nodeToRemove.setNumberOfDuplicates(numberOfDuplicates - 1);
+        } else {
+            removeNode(nodeToRemove);
+        }
     }
 
     private void removeNode(BinaryTreeNode<T> node) {
