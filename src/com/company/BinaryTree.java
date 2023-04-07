@@ -172,4 +172,33 @@ public class BinaryTree<T extends Comparable<T>> {
         }
         return node;
     }
+
+
+    private long calculateBalanceFactor(BinaryTreeNode<T> node) {
+        if (node == null) {
+            return -1;
+        } else {
+            return calculateDepthRecursive(node.getRight()) - calculateDepthRecursive(node.getLeft());
+        }
+    }
+
+    private BinaryTreeNode<T> leftRotate(BinaryTreeNode<T> oldSubtreeRoot) {
+        BinaryTreeNode<T> newSubtreeRoot = oldSubtreeRoot.getRight();
+        BinaryTreeNode<T> rightChildForOldSubtreeRoot = newSubtreeRoot.getLeft();
+
+        newSubtreeRoot.setLeft(oldSubtreeRoot);
+        oldSubtreeRoot.setRight(rightChildForOldSubtreeRoot);
+
+        return newSubtreeRoot;
+    }
+
+    private BinaryTreeNode<T> rightRotate(BinaryTreeNode<T> oldSubtreeRoot) {
+        BinaryTreeNode<T> newSubtreeRoot = oldSubtreeRoot.getLeft();
+        BinaryTreeNode<T> leftChildForOldSubtreeRoot = newSubtreeRoot.getRight();
+
+        newSubtreeRoot.setRight(oldSubtreeRoot);
+        oldSubtreeRoot.setLeft(leftChildForOldSubtreeRoot);
+
+        return newSubtreeRoot;
+    }
 }
