@@ -1,5 +1,9 @@
 package com.company;
 
+import static com.company.Direction.LEFT;
+import static com.company.Direction.NONE;
+import static com.company.Direction.RIGHT;
+
 public class BinaryTree<T extends Comparable<T>> {
 
     private BinaryTreeNode<T> root;
@@ -14,29 +18,60 @@ public class BinaryTree<T extends Comparable<T>> {
         if (root == null) {
             root = new BinaryTreeNode<>(null, value, 0);
         } else {
-            addRecursive(root, value);
+            addRecursive(root, value, new DirectionHolder(NONE));
+        }
+        updateNodeLevelsRecursive(root, 0);
+    }
+
+    private void addRecursive(BinaryTreeNode<T> node, T value, DirectionHolder addedLeafDirection) {
+        T nodeValue = node.getValue();
+        if (value.compareTo(nodeValue) == 0) {
+            node.setNumberOfDuplicates(node.getNumberOfDuplicates() + 1);
+        } else {
+            if (value.compareTo(nodeValue) < 0) {
+                // go left
+                if (node.getLeft() != null) {
+                    addRecursive(node.getLeft(), value, addedLeafDirection);
+                } else {
+                    node.setLeft(new BinaryTreeNode<>(node, value));
+                    addedLeafDirection.setDirection(LEFT);
+                }
+            } else if (value.compareTo(nodeValue) > 0) {
+                // go right
+                if (node.getRight() != null) {
+                    addRecursive(node.getRight(), value, addedLeafDirection);
+                } else {
+                    node.setRight(new BinaryTreeNode<>(node, value));
+                    addedLeafDirection.setDirection(RIGHT);
+                }
+            }
+            balance(node, addedLeafDirection.getDirection());
         }
     }
 
-    private void addRecursive(BinaryTreeNode<T> node, T value) {
-        T nodeValue = node.getValue();
-        if (nodeValue.compareTo(value) == 0) {
-            node.setNumberOfDuplicates(node.getNumberOfDuplicates() + 1);
+    private void balance(BinaryTreeNode<T> node, Direction addedLeafDirection) {
+        if (addedLeafDirection == null || NONE.equals(addedLeafDirection)) {
+            throw new RuntimeException("Wrong method usage");
         }
-        if (nodeValue.compareTo(value) > 0) {
-            // go left
-            if (node.getLeft() != null) {
-                addRecursive(node.getLeft(), value);
+
+        long bf = calculateBalanceFactor(node);
+        if (bf > 1) {
+            if (LEFT.equals(addedLeafDirection)) {
+                // r-l
+                rotate(node.getRight(), RIGHT);
+                rotate(node, LEFT);
             } else {
-                node.setLeft(new BinaryTreeNode<>(node, value));
+                // r-r
+                rotate(node, LEFT);
             }
-        }
-        if (nodeValue.compareTo(value) < 0) {
-            // go right
-            if (node.getRight() != null) {
-                addRecursive(node.getRight(), value);
+        } else if (bf < -1) {
+            if (LEFT.equals(addedLeafDirection)) {
+                // l-l
+                rotate(node, RIGHT);
             } else {
-                node.setRight(new BinaryTreeNode<>(node, value));
+                // l-r
+                rotate(node.getLeft(), LEFT);
+                rotate(node, RIGHT);
             }
         }
     }
@@ -182,12 +217,43 @@ public class BinaryTree<T extends Comparable<T>> {
         }
     }
 
+    private void rotate(BinaryTreeNode<T> subtreeRoot, Direction rotateDirection) {
+        BinaryTreeNode<T> parent = subtreeRoot.getParent();
+        boolean isRoot = parent == null;
+        boolean isLeftChild = !isRoot && subtreeRoot == parent.getLeft();
+        boolean isRightChild = !isRoot && subtreeRoot == parent.getRight();
+        BinaryTreeNode<T> newSubtreeRoot;
+
+        switch (rotateDirection) {
+            case LEFT -> newSubtreeRoot = leftRotate(subtreeRoot);
+            case RIGHT -> newSubtreeRoot = rightRotate(subtreeRoot);
+            default -> throw new RuntimeException("Rotating to wrong direction");
+        }
+
+        if (isRoot) {
+            root = newSubtreeRoot;
+        }
+        if (isLeftChild) {
+            parent.setLeft(newSubtreeRoot);
+            newSubtreeRoot.setParent(parent);
+        }
+        if (isRightChild) {
+            parent.setRight(newSubtreeRoot);
+            newSubtreeRoot.setParent(parent);
+        }
+    }
+
     private BinaryTreeNode<T> leftRotate(BinaryTreeNode<T> oldSubtreeRoot) {
         BinaryTreeNode<T> newSubtreeRoot = oldSubtreeRoot.getRight();
         BinaryTreeNode<T> rightChildForOldSubtreeRoot = newSubtreeRoot.getLeft();
 
         newSubtreeRoot.setLeft(oldSubtreeRoot);
+        oldSubtreeRoot.setParent(newSubtreeRoot);
+
         oldSubtreeRoot.setRight(rightChildForOldSubtreeRoot);
+        if (rightChildForOldSubtreeRoot != null) {
+            rightChildForOldSubtreeRoot.setParent(oldSubtreeRoot);
+        }
 
         return newSubtreeRoot;
     }
@@ -197,7 +263,12 @@ public class BinaryTree<T extends Comparable<T>> {
         BinaryTreeNode<T> leftChildForOldSubtreeRoot = newSubtreeRoot.getRight();
 
         newSubtreeRoot.setRight(oldSubtreeRoot);
+        oldSubtreeRoot.setParent(newSubtreeRoot);
+
         oldSubtreeRoot.setLeft(leftChildForOldSubtreeRoot);
+        if (leftChildForOldSubtreeRoot != null) {
+            leftChildForOldSubtreeRoot.setParent(oldSubtreeRoot);
+        }
 
         return newSubtreeRoot;
     }
