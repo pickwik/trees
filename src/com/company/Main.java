@@ -56,15 +56,18 @@ public class Main {
         binaryTree.add(7);*/
 
         //binaryTree.printTree();
-        /*System.out.println("-------------------------------------------------------------------------------------------");
         binaryTree.remove(6);
+        System.out.println("removed 6");
         binaryTree.printTree();
-        System.out.println("-------------------------------------------------------------------------------------------");
         binaryTree.remove(5);
+        System.out.println("removed 5");
         binaryTree.printTree();
-        System.out.println("-------------------------------------------------------------------------------------------");
         binaryTree.remove(7);
-        binaryTree.printTree();*/
+        System.out.println("removed 7");
+        binaryTree.printTree();
+        binaryTree.remove(17);
+        System.out.println("removed 17");
+        binaryTree.printTree();
     }
 
 }

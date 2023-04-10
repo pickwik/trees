@@ -1,7 +1,6 @@
 package com.company;
 
 import static com.company.Direction.LEFT;
-import static com.company.Direction.NONE;
 import static com.company.Direction.RIGHT;
 
 public class BinaryTree<T extends Comparable<T>> {
@@ -18,12 +17,12 @@ public class BinaryTree<T extends Comparable<T>> {
         if (root == null) {
             root = new BinaryTreeNode<>(null, value, 0);
         } else {
-            addRecursive(root, value, new DirectionHolder(NONE));
+            addAndBalanceRecursive(root, value);
         }
         updateNodeLevelsRecursive(root, 0);
     }
 
-    private void addRecursive(BinaryTreeNode<T> node, T value, DirectionHolder addedLeafDirection) {
+    private void addAndBalanceRecursive(BinaryTreeNode<T> node, T value) {
         T nodeValue = node.getValue();
         if (value.compareTo(nodeValue) == 0) {
             node.setNumberOfDuplicates(node.getNumberOfDuplicates() + 1);
@@ -31,32 +30,27 @@ public class BinaryTree<T extends Comparable<T>> {
             if (value.compareTo(nodeValue) < 0) {
                 // go left
                 if (node.getLeft() != null) {
-                    addRecursive(node.getLeft(), value, addedLeafDirection);
+                    addAndBalanceRecursive(node.getLeft(), value);
                 } else {
                     node.setLeft(new BinaryTreeNode<>(node, value));
-                    addedLeafDirection.setDirection(LEFT);
                 }
             } else if (value.compareTo(nodeValue) > 0) {
                 // go right
                 if (node.getRight() != null) {
-                    addRecursive(node.getRight(), value, addedLeafDirection);
+                    addAndBalanceRecursive(node.getRight(), value);
                 } else {
                     node.setRight(new BinaryTreeNode<>(node, value));
-                    addedLeafDirection.setDirection(RIGHT);
                 }
             }
-            balance(node, addedLeafDirection.getDirection());
+            balance(node);
         }
     }
 
-    private void balance(BinaryTreeNode<T> node, Direction addedLeafDirection) {
-        if (addedLeafDirection == null || NONE.equals(addedLeafDirection)) {
-            throw new RuntimeException("Wrong method usage");
-        }
-
+    private void balance(BinaryTreeNode<T> node) {
         long bf = calculateBalanceFactor(node);
         if (bf > 1) {
-            if (LEFT.equals(addedLeafDirection)) {
+            long bfRightChild = calculateBalanceFactor(node.getRight());
+            if (bfRightChild < 0) { // bfRightChild == -1
                 // r-l
                 rotate(node.getRight(), RIGHT);
                 rotate(node, LEFT);
@@ -65,7 +59,8 @@ public class BinaryTree<T extends Comparable<T>> {
                 rotate(node, LEFT);
             }
         } else if (bf < -1) {
-            if (LEFT.equals(addedLeafDirection)) {
+            long bfLeftChild = calculateBalanceFactor(node.getLeft());
+            if (bfLeftChild < 0) { // bfLeftChild == -1
                 // l-l
                 rotate(node, RIGHT);
             } else {
@@ -78,12 +73,34 @@ public class BinaryTree<T extends Comparable<T>> {
 
 
     public void remove(T value) {
-        BinaryTreeNode<T> nodeToRemove = search(value);
-        long numberOfDuplicates = nodeToRemove.getNumberOfDuplicates();
-        if (numberOfDuplicates > 0) {
-            nodeToRemove.setNumberOfDuplicates(numberOfDuplicates - 1);
+        if (root != null) {
+            removeAndBalanceRecursive(root, value);
+            updateNodeLevelsRecursive(root, 0);
+        }
+    }
+
+    private void removeAndBalanceRecursive(BinaryTreeNode<T> node, T value) {
+        T nodeValue = node.getValue();
+        if (value.compareTo(nodeValue) == 0) {
+            long numberOfDuplicates = node.getNumberOfDuplicates();
+            if (numberOfDuplicates > 0) {
+                node.setNumberOfDuplicates(numberOfDuplicates - 1); // todo: fix unnecessary balancing after return
+            } else {
+                removeNode(node);
+            }
         } else {
-            removeNode(nodeToRemove);
+            if (value.compareTo(nodeValue) < 0) {
+                // go left
+                if (node.getLeft() != null) {
+                    removeAndBalanceRecursive(node.getLeft(), value);
+                }
+            } else if (value.compareTo(nodeValue) > 0) {
+                // go right
+                if (node.getRight() != null) {
+                    removeAndBalanceRecursive(node.getRight(), value);
+                }
+            }
+            balance(node);
         }
     }
 
@@ -121,15 +138,26 @@ public class BinaryTree<T extends Comparable<T>> {
         } else {
             parent.setRight(child);
         }
-        updateNodeLevelsRecursive(child, node.getLevel());
+        child.setParent(parent);
     }
 
     private void removeNodeWithTwoChildNodes(BinaryTreeNode<T> node) {
-        BinaryTreeNode<T> replacingNode = findSmallestValueRecursive(node.getRight());
+        BinaryTreeNode<T> replacingNode = removeSmallestAndBalanceRecursive(node.getRight());
         node.setValue(replacingNode.getValue());
-        removeNode(replacingNode);
+        node.setNumberOfDuplicates(replacingNode.getNumberOfDuplicates());
     }
 
+    private BinaryTreeNode<T> removeSmallestAndBalanceRecursive(BinaryTreeNode<T> node) {
+        BinaryTreeNode<T> removedNode;
+        if (node.getLeft() == null) {
+            removeNode(node);
+            removedNode = node;
+        } else {
+            removedNode = removeSmallestAndBalanceRecursive(node.getLeft());
+            balance(node);
+        }
+        return removedNode;
+    }
 
     public BinaryTreeNode<T> search(T value) {
         if (root == null) {
@@ -143,7 +171,7 @@ public class BinaryTree<T extends Comparable<T>> {
         if (nodeValue.compareTo(value) == 0) {
             return node;
         }
-        if (nodeValue.compareTo(value) > 0) {
+        if (value.compareTo(nodeValue) < 0) {
             // go left
             if (node.getLeft() != null) {
                 return searchRecursive(node.getLeft(), value);
@@ -151,7 +179,7 @@ public class BinaryTree<T extends Comparable<T>> {
                 return null;
             }
         }
-        if (nodeValue.compareTo(value) < 0) {
+        if (value.compareTo(nodeValue) > 0) {
             // go right
             if (node.getRight() != null) {
                 return searchRecursive(node.getRight(), value);
@@ -201,13 +229,6 @@ public class BinaryTree<T extends Comparable<T>> {
         }
     }
 
-    private BinaryTreeNode<T> findSmallestValueRecursive(BinaryTreeNode<T> node) {
-        if (node.getLeft() != null) {
-            return findSmallestValueRecursive(node.getLeft());
-        }
-        return node;
-    }
-
 
     private long calculateBalanceFactor(BinaryTreeNode<T> node) {
         if (node == null) {
@@ -232,6 +253,7 @@ public class BinaryTree<T extends Comparable<T>> {
 
         if (isRoot) {
             root = newSubtreeRoot;
+            newSubtreeRoot.setParent(null);
         }
         if (isLeftChild) {
             parent.setLeft(newSubtreeRoot);
