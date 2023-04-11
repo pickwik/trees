@@ -15,11 +15,10 @@ public class BinaryTree<T extends Comparable<T>> {
 
     public void add(T value) {
         if (root == null) {
-            root = new BinaryTreeNode<>(null, value, 0);
+            root = new BinaryTreeNode<>(null, value);
         } else {
             addAndBalanceRecursive(root, value);
         }
-        updateNodeLevelsRecursive(root, 0);
     }
 
     private void addAndBalanceRecursive(BinaryTreeNode<T> node, T value) {
@@ -75,7 +74,6 @@ public class BinaryTree<T extends Comparable<T>> {
     public void remove(T value) {
         if (root != null) {
             removeAndBalanceRecursive(root, value);
-            updateNodeLevelsRecursive(root, 0);
         }
     }
 
@@ -214,19 +212,6 @@ public class BinaryTree<T extends Comparable<T>> {
         long lDepth = calculateDepthRecursive(node.getLeft());
         long rDepth = calculateDepthRecursive(node.getRight());
         return Math.max(lDepth, rDepth) + 1;
-    }
-
-    /**
-     * Updates level values starting from provided node
-     */
-    private void updateNodeLevelsRecursive(BinaryTreeNode<T> node, long levelValue) {
-        node.setLevel(levelValue++);
-        if (node.getLeft() != null) {
-            updateNodeLevelsRecursive(node.getLeft(), levelValue);
-        }
-        if (node.getRight() != null) {
-            updateNodeLevelsRecursive(node.getRight(), levelValue);
-        }
     }
 
 

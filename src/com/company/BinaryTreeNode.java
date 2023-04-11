@@ -9,21 +9,11 @@ public class BinaryTreeNode<T> {
     private BinaryTreeNode<T> right;
     private BinaryTreeNode<T> left;
 
-    private long level; // level relative to the whole tree
-
 
     public BinaryTreeNode(BinaryTreeNode<T> parent, T value) {
         this.parent = parent;
         this.value = value;
         this.numberOfDuplicates = 0;
-        this.level = parent.level + 1;
-    }
-
-    public BinaryTreeNode(BinaryTreeNode<T> parent, T value, long level) {
-        this.parent = parent;
-        this.value = value;
-        this.numberOfDuplicates = 0;
-        this.level = level;
     }
 
 
@@ -65,13 +55,5 @@ public class BinaryTreeNode<T> {
 
     public void setLeft(BinaryTreeNode<T> left) {
         this.left = left;
-    }
-
-    public long getLevel() {
-        return level;
-    }
-
-    public void setLevel(long level) {
-        this.level = level;
     }
 }

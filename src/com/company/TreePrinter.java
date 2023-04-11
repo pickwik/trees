@@ -10,24 +10,26 @@ public class TreePrinter<T> {
     private final BinaryTreeNode<T> root;
     private final long placeholderLength = 2; // hardcoded for now
     private final long treeDepth;
-    private final Map<Long, StringBuilder> levelsMap;
+    private final Map<BinaryTreeNode<T>, Long> nodeLevelsMap = new HashMap<>();
+    private final Map<Long, StringBuilder> levelStringBuildersMap = new HashMap<>();
 
 
     public TreePrinter(BinaryTreeNode<T> root, long treeDepth) {
         this.root = root;
         this.treeDepth = treeDepth;
-        levelsMap = initLevelsMapWithMargins();
+        initNodeLevelsMapRecursive(root, 0);
+        initLevelStringBuildersMapWithMargins();
     }
 
 
     public void print() {
         walkthrough(root, node -> {
-            long level = node.getLevel();
-            StringBuilder thisLevelStringBuilder = levelsMap.get(level);
+            long level = nodeLevelsMap.get(node);
+            StringBuilder thisLevelStringBuilder = levelStringBuildersMap.get(level);
             thisLevelStringBuilder.append(String.format("%02d", node.getValue()))
                     .append(multiply(" ", calculatePadding(treeDepth - level) * placeholderLength));
         });
-        levelsMap.entrySet().stream()
+        levelStringBuildersMap.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey(Comparator.comparingLong(l -> l)))
                 .forEach(entry -> System.out.println(entry.getKey() + "\t" + entry.getValue().toString()));
     }
@@ -35,35 +37,46 @@ public class TreePrinter<T> {
     private void walkthrough(BinaryTreeNode<T> node, Consumer<BinaryTreeNode<T>> function) {
         function.accept(node); // visit node
 
+        long level = nodeLevelsMap.get(node);
+
         if (node.getLeft() != null) {
             walkthrough(node.getLeft(), function);
-        } else if (node.getLevel() < treeDepth) {
-            addPaddingsInsteadOfNullNodes(node.getLevel() + 1);
+        } else if (level < treeDepth) {
+            addPaddingsInsteadOfNullNodes(level + 1);
         }
 
         if (node.getRight() != null) {
             walkthrough(node.getRight(), function);
-        } else if (node.getLevel() < treeDepth) {
-            addPaddingsInsteadOfNullNodes(node.getLevel() + 1);
+        } else if (level < treeDepth) {
+            addPaddingsInsteadOfNullNodes(level + 1);
         }
     }
 
-    private Map<Long, StringBuilder> initLevelsMapWithMargins() {
-        Map<Long, StringBuilder> levelsMap = new HashMap<>();
+    private void initNodeLevelsMapRecursive(BinaryTreeNode<T> node, long level) {
+        nodeLevelsMap.put(node, level++);
+
+        if (node.getLeft() != null) {
+            initNodeLevelsMapRecursive(node.getLeft(), level);
+        }
+        if (node.getRight() != null) {
+            initNodeLevelsMapRecursive(node.getRight(), level);
+        }
+    }
+
+    private void initLevelStringBuildersMapWithMargins() {
         for (long i = 0; i < treeDepth; i++) {
             StringBuilder sb = new StringBuilder();
             long margin = calculatePadding((treeDepth - i) - 1); // margin for current level == padding for next level
             sb.append(multiply(" ", margin * placeholderLength));
-            levelsMap.put(i, sb);
+            levelStringBuildersMap.put(i, sb);
         }
-        levelsMap.put(treeDepth, new StringBuilder()); // no margin for last level
-        return levelsMap;
+        levelStringBuildersMap.put(treeDepth, new StringBuilder()); // no margin for last level
     }
 
     private void addPaddingsInsteadOfNullNodes(long levelOfNullNode) {
         long childMultiplier = 1;
         for (long i = levelOfNullNode; i <= treeDepth; i++) {
-            StringBuilder sb = levelsMap.get(i);
+            StringBuilder sb = levelStringBuildersMap.get(i);
             long padding = (1 + calculatePadding(treeDepth - i)) * childMultiplier; // (node itself + padding for current level) * number of possible nodes in following subtrees
             sb.append(multiply(" ", padding * placeholderLength));
             childMultiplier *= 2;
