@@ -5,16 +5,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class TreePrinter<T> {
+public class TreePrinter<K, V> {
 
-    private final BinaryTreeNode<T> root;
+    private final BinaryTreeNode<K, V> root;
     private final long placeholderLength = 2; // hardcoded for now
     private final long treeDepth;
-    private final Map<BinaryTreeNode<T>, Long> nodeLevelsMap = new HashMap<>();
+    private final Map<BinaryTreeNode<K, V>, Long> nodeLevelsMap = new HashMap<>();
     private final Map<Long, StringBuilder> levelStringBuildersMap = new HashMap<>();
 
 
-    public TreePrinter(BinaryTreeNode<T> root, long treeDepth) {
+    public TreePrinter(BinaryTreeNode<K, V> root, long treeDepth) {
         this.root = root;
         this.treeDepth = treeDepth;
         initNodeLevelsMapRecursive(root, 0);
@@ -26,7 +26,7 @@ public class TreePrinter<T> {
         walkthrough(root, node -> {
             long level = nodeLevelsMap.get(node);
             StringBuilder thisLevelStringBuilder = levelStringBuildersMap.get(level);
-            thisLevelStringBuilder.append(String.format("%02d", node.getValue()))
+            thisLevelStringBuilder.append(String.format("%02d", node.getKey()))
                     .append(multiply(" ", calculatePadding(treeDepth - level) * placeholderLength));
         });
         levelStringBuildersMap.entrySet().stream()
@@ -34,7 +34,7 @@ public class TreePrinter<T> {
                 .forEach(entry -> System.out.println(entry.getKey() + "\t" + entry.getValue().toString()));
     }
 
-    private void walkthrough(BinaryTreeNode<T> node, Consumer<BinaryTreeNode<T>> function) {
+    private void walkthrough(BinaryTreeNode<K, V> node, Consumer<BinaryTreeNode<K, V>> function) {
         function.accept(node); // visit node
 
         long level = nodeLevelsMap.get(node);
@@ -52,7 +52,7 @@ public class TreePrinter<T> {
         }
     }
 
-    private void initNodeLevelsMapRecursive(BinaryTreeNode<T> node, long level) {
+    private void initNodeLevelsMapRecursive(BinaryTreeNode<K, V> node, long level) {
         nodeLevelsMap.put(node, level++);
 
         if (node.getLeft() != null) {

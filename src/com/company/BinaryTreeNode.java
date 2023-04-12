@@ -1,59 +1,59 @@
 package com.company;
 
-public class BinaryTreeNode<T> {
+public class BinaryTreeNode<K, V> {
 
-    private BinaryTreeNode<T> parent;
-    private T value;
-    private long numberOfDuplicates;
+    private BinaryTreeNode<K, V> parent;
+    private K key;
+    private V value;
 
-    private BinaryTreeNode<T> right;
-    private BinaryTreeNode<T> left;
+    private BinaryTreeNode<K, V> right;
+    private BinaryTreeNode<K, V> left;
 
 
-    public BinaryTreeNode(BinaryTreeNode<T> parent, T value) {
+    public BinaryTreeNode(BinaryTreeNode<K, V> parent, K key, V value) {
         this.parent = parent;
+        this.key = key;
         this.value = value;
-        this.numberOfDuplicates = 0;
     }
 
 
-    public BinaryTreeNode<T> getParent() {
+    public BinaryTreeNode<K, V> getParent() {
         return parent;
     }
 
-    public void setParent(BinaryTreeNode<T> parent) {
+    public void setParent(BinaryTreeNode<K, V> parent) {
         this.parent = parent;
     }
 
-    public T getValue() {
+    public K getKey() {
+        return key;
+    }
+
+    public void setKey(K key) {
+        this.key = key;
+    }
+
+    public V getValue() {
         return value;
     }
 
-    public void setValue(T value) {
+    public void setValue(V value) {
         this.value = value;
     }
 
-    public long getNumberOfDuplicates() {
-        return numberOfDuplicates;
-    }
-
-    public void setNumberOfDuplicates(long numberOfDuplicates) {
-        this.numberOfDuplicates = numberOfDuplicates;
-    }
-
-    public BinaryTreeNode<T> getRight() {
+    public BinaryTreeNode<K, V> getRight() {
         return right;
     }
 
-    public void setRight(BinaryTreeNode<T> right) {
+    public void setRight(BinaryTreeNode<K, V> right) {
         this.right = right;
     }
 
-    public BinaryTreeNode<T> getLeft() {
+    public BinaryTreeNode<K, V> getLeft() {
         return left;
     }
 
-    public void setLeft(BinaryTreeNode<T> left) {
+    public void setLeft(BinaryTreeNode<K, V> left) {
         this.left = left;
     }
 }
