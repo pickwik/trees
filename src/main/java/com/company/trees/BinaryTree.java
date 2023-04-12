@@ -1,11 +1,11 @@
-package com.company;
+package com.company.trees;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.company.Direction.LEFT;
-import static com.company.Direction.RIGHT;
+import static com.company.trees.Direction.LEFT;
+import static com.company.trees.Direction.RIGHT;
 
 public class BinaryTree<K extends Comparable<K>, V> {
 
