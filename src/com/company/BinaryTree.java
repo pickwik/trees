@@ -1,5 +1,9 @@
 package com.company;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import static com.company.Direction.LEFT;
 import static com.company.Direction.RIGHT;
 
@@ -22,18 +26,18 @@ public class BinaryTree<K extends Comparable<K>, V> {
     }
 
     private void addAndBalanceRecursive(BinaryTreeNode<K, V> node, K key, V value) {
-        K nodeValue = node.getKey();
-        if (key.compareTo(nodeValue) == 0) {
-            node.setValue(value);
+        K nodeKey = node.getKey();
+        if (key.compareTo(nodeKey) == 0) {
+            node.addValue(value);
         } else {
-            if (key.compareTo(nodeValue) < 0) {
+            if (key.compareTo(nodeKey) < 0) {
                 // go left
                 if (node.getLeft() != null) {
                     addAndBalanceRecursive(node.getLeft(), key, value);
                 } else {
                     node.setLeft(new BinaryTreeNode<>(node, key, value));
                 }
-            } else if (key.compareTo(nodeValue) > 0) {
+            } else if (key.compareTo(nodeKey) > 0) {
                 // go right
                 if (node.getRight() != null) {
                     addAndBalanceRecursive(node.getRight(), key, value);
@@ -44,6 +48,177 @@ public class BinaryTree<K extends Comparable<K>, V> {
             balance(node);
         }
     }
+
+
+    public void remove(K key) {
+        if (root != null) {
+            removeByKeyAndBalanceRecursive(root, key);
+        }
+    }
+
+    public void remove(V value) {
+        remove(value, true);
+    }
+
+    public void remove(V value, boolean removeAll) {
+        if (root != null) {
+            List<BinaryTreeNode<K, V>> nodesToRemove = search(value);
+            if (nodesToRemove.size() > 1 && !removeAll) {
+                throw new RuntimeException("Multiple nodes found, but 'removeAll' flag is false");
+            }
+            if (!nodesToRemove.isEmpty()) {
+                nodesToRemove.forEach(nodeToRemove -> removeByValueAndBalanceRecursive(root, value, nodeToRemove));
+            }
+        }
+    }
+
+    private void removeByKeyAndBalanceRecursive(BinaryTreeNode<K, V> node, K key) {
+        K nodeKey = node.getKey();
+        if (key.compareTo(nodeKey) == 0) {
+            removeNode(node);
+        } else {
+            if (key.compareTo(nodeKey) < 0) {
+                // go left
+                if (node.getLeft() != null) {
+                    removeByKeyAndBalanceRecursive(node.getLeft(), key);
+                }
+            } else if (key.compareTo(nodeKey) > 0) {
+                // go right
+                if (node.getRight() != null) {
+                    removeByKeyAndBalanceRecursive(node.getRight(), key);
+                }
+            }
+            balance(node);
+        }
+    }
+
+    private void removeByValueAndBalanceRecursive(BinaryTreeNode<K,V> node, V value, BinaryTreeNode<K, V> nodeToRemove) {
+        if (nodeToRemove.equals(node)) {
+            node.removeValue(value);
+            if (node.getValues().isEmpty()) {
+                removeNode(node);
+            }
+        } else {
+            if (node.getLeft() != null) {
+                removeByValueAndBalanceRecursive(node.getLeft(), value, nodeToRemove);
+            }
+            if (node.getRight() != null) {
+                removeByValueAndBalanceRecursive(node.getRight(), value, nodeToRemove);
+            }
+        }
+        balance(node);
+    }
+
+    private void removeNode(BinaryTreeNode<K, V> node) {
+        if (node == null) {
+            return;
+        }
+        int numberOfChildNodes = countChildNodes(node);
+        switch (numberOfChildNodes) {
+            case 0 -> removeNodeWithoutChildNodes(node);
+            case 1 -> removeNodeWithOneChildNode(node);
+            case 2 -> removeNodeWithTwoChildNodes(node);
+        }
+    }
+
+    private void removeNodeWithoutChildNodes(BinaryTreeNode<K, V> node) {
+        BinaryTreeNode<K, V> parent = node.getParent();
+        if (node.equals(parent.getLeft())) {
+            parent.setLeft(null);
+        } else {
+            parent.setRight(null);
+        }
+    }
+
+    private void removeNodeWithOneChildNode(BinaryTreeNode<K, V> node) {
+        BinaryTreeNode<K, V> parent = node.getParent();
+        BinaryTreeNode<K, V> child;
+        if (node.getLeft() != null) {
+            child = node.getLeft();
+        } else {
+            child = node.getRight();
+        }
+        if (node.equals(parent.getLeft())) {
+            parent.setLeft(child);
+        } else {
+            parent.setRight(child);
+        }
+        child.setParent(parent);
+    }
+
+    private void removeNodeWithTwoChildNodes(BinaryTreeNode<K, V> node) {
+        BinaryTreeNode<K, V> replacingNode = removeSmallestAndBalanceRecursive(node.getRight());
+        node.setKey(replacingNode.getKey());
+        node.setValues(replacingNode.getValues());
+    }
+
+    private BinaryTreeNode<K, V> removeSmallestAndBalanceRecursive(BinaryTreeNode<K, V> node) {
+        BinaryTreeNode<K, V> removedNode;
+        if (node.getLeft() == null) {
+            removeNode(node);
+            removedNode = node;
+        } else {
+            removedNode = removeSmallestAndBalanceRecursive(node.getLeft());
+            balance(node);
+        }
+        return removedNode;
+    }
+
+
+    public BinaryTreeNode<K, V> search(K key) {
+        if (root == null) {
+            return null;
+        }
+        return searchByKeyRecursive(root, key);
+    }
+
+    public List<BinaryTreeNode<K, V>> search(V value) {
+        if (root == null) {
+            return Collections.emptyList();
+        }
+        List<BinaryTreeNode<K, V>> foundNodes = new ArrayList<>();
+        searchByValueRecursive(root, value, foundNodes);
+        return foundNodes;
+    }
+
+    private BinaryTreeNode<K, V> searchByKeyRecursive(BinaryTreeNode<K, V> node, K key) {
+        K nodeKey = node.getKey();
+        if (nodeKey.compareTo(key) == 0) {
+            return node;
+        }
+        if (key.compareTo(nodeKey) < 0) {
+            // go left
+            if (node.getLeft() != null) {
+                return searchByKeyRecursive(node.getLeft(), key);
+            }
+        }
+        if (key.compareTo(nodeKey) > 0) {
+            // go right
+            if (node.getRight() != null) {
+                return searchByKeyRecursive(node.getRight(), key);
+            }
+        }
+        return null;
+    }
+
+    private void searchByValueRecursive(BinaryTreeNode<K, V> node, V value, List<BinaryTreeNode<K, V>> foundNodes) {
+        if (node.hasValue(value)) {
+            foundNodes.add(node);
+        }
+        if (node.getLeft() != null) {
+            searchByValueRecursive(node.getLeft(), value, foundNodes);
+        }
+        if (node.getRight() != null) {
+            searchByValueRecursive(node.getRight(), value, foundNodes);
+        }
+    }
+
+
+    public void printTree() {
+        long treeDepth = calculateDepthRecursive(root);
+        new TreePrinter<>(root, treeDepth).print();
+    }
+
 
     private void balance(BinaryTreeNode<K, V> node) {
         long bf = calculateBalanceFactor(node);
@@ -70,148 +245,6 @@ public class BinaryTree<K extends Comparable<K>, V> {
         }
     }
 
-
-    public void remove(K key) {
-        if (root != null) {
-            removeAndBalanceRecursive(root, key);
-        }
-    }
-
-    public void remove(V value) {
-        removeAndBalanceRecursive(root.getRight(), root.getKey());
-    }
-
-    private void removeAndBalanceRecursive(BinaryTreeNode<K, V> node, K key) {
-        K nodeValue = node.getKey();
-        if (key.compareTo(nodeValue) == 0) {
-            if (System.currentTimeMillis() % 2 == 0) {
-                node.setValue(null); // todo: fix unnecessary balancing after return
-            } else {
-                removeNode(node);
-            }
-        } else {
-            if (key.compareTo(nodeValue) < 0) {
-                // go left
-                if (node.getLeft() != null) {
-                    removeAndBalanceRecursive(node.getLeft(), key);
-                }
-            } else if (key.compareTo(nodeValue) > 0) {
-                // go right
-                if (node.getRight() != null) {
-                    removeAndBalanceRecursive(node.getRight(), key);
-                }
-            }
-            balance(node);
-        }
-    }
-
-    private void removeNode(BinaryTreeNode<K, V> node) {
-        if (node == null) {
-            return;
-        }
-        int numberOfChildNodes = countChildNodes(node);
-        switch (numberOfChildNodes) {
-            case 0 -> removeNodeWithoutChildNodes(node);
-            case 1 -> removeNodeWithOneChildNode(node);
-            case 2 -> removeNodeWithTwoChildNodes(node);
-        }
-    }
-
-    private void removeNodeWithoutChildNodes(BinaryTreeNode<K, V> node) {
-        BinaryTreeNode<K, V> parent = node.getParent();
-        if (parent.getLeft() == node) {
-            parent.setLeft(null);
-        } else {
-            parent.setRight(null);
-        }
-    }
-
-    private void removeNodeWithOneChildNode(BinaryTreeNode<K, V> node) {
-        BinaryTreeNode<K, V> parent = node.getParent();
-        BinaryTreeNode<K, V> child;
-        if (node.getLeft() != null) {
-            child = node.getLeft();
-        } else {
-            child = node.getRight();
-        }
-        if (parent.getLeft() == node) {
-            parent.setLeft(child);
-        } else {
-            parent.setRight(child);
-        }
-        child.setParent(parent);
-    }
-
-    private void removeNodeWithTwoChildNodes(BinaryTreeNode<K, V> node) {
-        BinaryTreeNode<K, V> replacingNode = removeSmallestAndBalanceRecursive(node.getRight());
-        node.setKey(replacingNode.getKey());
-        node.setValue(replacingNode.getValue());
-    }
-
-    private BinaryTreeNode<K, V> removeSmallestAndBalanceRecursive(BinaryTreeNode<K, V> node) {
-        BinaryTreeNode<K, V> removedNode;
-        if (node.getLeft() == null) {
-            removeNode(node);
-            removedNode = node;
-        } else {
-            removedNode = removeSmallestAndBalanceRecursive(node.getLeft());
-            balance(node);
-        }
-        return removedNode;
-    }
-
-    public BinaryTreeNode<K, V> search(K key) {
-        if (root == null) {
-            return null;
-        }
-        return searchRecursive(root, key);
-    }
-
-    public BinaryTreeNode<K, V> search(V value) {
-        return new BinaryTreeNode<>(null, null, value);
-    }
-
-    private BinaryTreeNode<K, V> searchRecursive(BinaryTreeNode<K, V> node, K key) {
-        K nodeKey = node.getKey();
-        if (nodeKey.compareTo(key) == 0) {
-            return node;
-        }
-        if (key.compareTo(nodeKey) < 0) {
-            // go left
-            if (node.getLeft() != null) {
-                return searchRecursive(node.getLeft(), key);
-            } else {
-                return null;
-            }
-        }
-        if (key.compareTo(nodeKey) > 0) {
-            // go right
-            if (node.getRight() != null) {
-                return searchRecursive(node.getRight(), key);
-            } else {
-                return null;
-            }
-        }
-        return null;
-    }
-
-
-    public void printTree() {
-        long treeDepth = calculateDepthRecursive(root);
-        new TreePrinter<>(root, treeDepth).print();
-    }
-
-
-    private int countChildNodes(BinaryTreeNode<K, V> node) {
-        if (node.getLeft() == null && node.getRight() == null) {
-            return 0;
-        } else if (node.getLeft() != null && node.getRight() != null) {
-            return 2;
-        } else {
-            return 1;
-        }
-    }
-
     private long calculateDepthRecursive(BinaryTreeNode<K, V> node) {
         if (node == null) {
             return -1;
@@ -220,7 +253,6 @@ public class BinaryTree<K extends Comparable<K>, V> {
         long rDepth = calculateDepthRecursive(node.getRight());
         return Math.max(lDepth, rDepth) + 1;
     }
-
 
     private long calculateBalanceFactor(BinaryTreeNode<K, V> node) {
         if (node == null) {
@@ -233,8 +265,8 @@ public class BinaryTree<K extends Comparable<K>, V> {
     private void rotate(BinaryTreeNode<K, V> subtreeRoot, Direction rotateDirection) {
         BinaryTreeNode<K, V> parent = subtreeRoot.getParent();
         boolean isRoot = parent == null;
-        boolean isLeftChild = !isRoot && subtreeRoot == parent.getLeft();
-        boolean isRightChild = !isRoot && subtreeRoot == parent.getRight();
+        boolean isLeftChild = !isRoot && subtreeRoot.equals(parent.getLeft());
+        boolean isRightChild = !isRoot && subtreeRoot.equals(parent.getRight());
         BinaryTreeNode<K, V> newSubtreeRoot;
 
         switch (rotateDirection) {
@@ -285,5 +317,15 @@ public class BinaryTree<K extends Comparable<K>, V> {
         }
 
         return newSubtreeRoot;
+    }
+
+    private int countChildNodes(BinaryTreeNode<K, V> node) {
+        if (node.getLeft() == null && node.getRight() == null) {
+            return 0;
+        } else if (node.getLeft() != null && node.getRight() != null) {
+            return 2;
+        } else {
+            return 1;
+        }
     }
 }
