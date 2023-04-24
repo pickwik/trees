@@ -1,5 +1,7 @@
 package com.company.trees;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,6 +11,7 @@ import static com.company.trees.Direction.RIGHT;
 
 public class BinaryTree<K extends Comparable<K>, V> {
 
+    @Getter
     private BinaryTreeNode<K, V> root;
 
 
@@ -18,6 +21,10 @@ public class BinaryTree<K extends Comparable<K>, V> {
 
 
     public void add(K key, V value) {
+        if (key == null) {
+            throw new RuntimeException("Key can't be null");
+        }
+
         if (root == null) {
             root = new BinaryTreeNode<>(null, key, value);
         } else {
@@ -113,37 +120,48 @@ public class BinaryTree<K extends Comparable<K>, V> {
         if (node == null) {
             return;
         }
+        boolean isRoot = root == node;
         int numberOfChildNodes = countChildNodes(node);
         switch (numberOfChildNodes) {
-            case 0 -> removeNodeWithoutChildNodes(node);
-            case 1 -> removeNodeWithOneChildNode(node);
-            case 2 -> removeNodeWithTwoChildNodes(node);
+            case 0 -> removeNodeWithoutChildNodes(node, isRoot);
+            case 1 -> removeNodeWithOneChildNode(node, isRoot);
+            case 2 -> removeNodeWithTwoChildNodes(node); // we don't care if node is root as pointers are not modified during this step
         }
     }
 
-    private void removeNodeWithoutChildNodes(BinaryTreeNode<K, V> node) {
-        BinaryTreeNode<K, V> parent = node.getParent();
-        if (node.equals(parent.getLeft())) {
-            parent.setLeft(null);
+    private void removeNodeWithoutChildNodes(BinaryTreeNode<K, V> node, boolean isRoot) {
+        if (isRoot) {
+            root = null;
         } else {
-            parent.setRight(null);
+            BinaryTreeNode<K, V> parent = node.getParent();
+            if (node.equals(parent.getLeft())) {
+                parent.setLeft(null);
+            } else {
+                parent.setRight(null);
+            }
         }
     }
 
-    private void removeNodeWithOneChildNode(BinaryTreeNode<K, V> node) {
-        BinaryTreeNode<K, V> parent = node.getParent();
+    private void removeNodeWithOneChildNode(BinaryTreeNode<K, V> node, boolean isRoot) {
         BinaryTreeNode<K, V> child;
         if (node.getLeft() != null) {
             child = node.getLeft();
         } else {
             child = node.getRight();
         }
-        if (node.equals(parent.getLeft())) {
-            parent.setLeft(child);
+
+        if (isRoot) {
+            root = child;
+            child.setParent(null);
         } else {
-            parent.setRight(child);
+            BinaryTreeNode<K, V> parent = node.getParent();
+            if (node.equals(parent.getLeft())) {
+                parent.setLeft(child);
+            } else {
+                parent.setRight(child);
+            }
+            child.setParent(parent);
         }
-        child.setParent(parent);
     }
 
     private void removeNodeWithTwoChildNodes(BinaryTreeNode<K, V> node) {
@@ -165,6 +183,9 @@ public class BinaryTree<K extends Comparable<K>, V> {
     }
 
 
+    /**
+     * Find node by specified key.
+     */
     public BinaryTreeNode<K, V> search(K key) {
         if (root == null) {
             return null;
@@ -172,6 +193,9 @@ public class BinaryTree<K extends Comparable<K>, V> {
         return searchByKeyRecursive(root, key);
     }
 
+    /**
+     * Find all nodes containing specified value.
+     */
     public List<BinaryTreeNode<K, V>> search(V value) {
         if (root == null) {
             return Collections.emptyList();
@@ -179,6 +203,17 @@ public class BinaryTree<K extends Comparable<K>, V> {
         List<BinaryTreeNode<K, V>> foundNodes = new ArrayList<>();
         searchByValueRecursive(root, value, foundNodes);
         return foundNodes;
+    }
+
+    /**
+     * Find node by specified key and value.
+     */
+    public BinaryTreeNode<K, V> search(K key, V value) {
+        BinaryTreeNode<K, V> nodeWithSameKey = search(key);
+        if (nodeWithSameKey.getValues().contains(value)) {
+            return nodeWithSameKey;
+        }
+        return null;
     }
 
     private BinaryTreeNode<K, V> searchByKeyRecursive(BinaryTreeNode<K, V> node, K key) {
@@ -217,6 +252,30 @@ public class BinaryTree<K extends Comparable<K>, V> {
     public void printTree() {
         long treeDepth = calculateDepthRecursive(root);
         new TreePrinter<>(root, treeDepth).print();
+    }
+
+
+    public boolean exists(K key, V value) {
+        return search(key, value) != null;
+    }
+
+
+    public long size() {
+        if (root == null) {
+            return 0;
+        }
+        return calculateSizeRecursive(root);
+    }
+
+    private long calculateSizeRecursive(BinaryTreeNode<K, V> node) {
+        long size = 1;
+        if (node.getLeft() != null) {
+            size += calculateSizeRecursive(node.getLeft());
+        }
+        if (node.getRight() != null) {
+            size += calculateSizeRecursive(node.getRight());
+        }
+        return size;
     }
 
 
