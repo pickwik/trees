@@ -100,7 +100,7 @@ public class BinaryTree<K extends Comparable<K>, V> {
     }
 
     private void removeByValueAndBalanceRecursive(BinaryTreeNode<K,V> node, V value, BinaryTreeNode<K, V> nodeToRemove) {
-        if (nodeToRemove.equals(node)) {
+        if (nodeToRemove == node) {
             node.removeValue(value);
             if (node.getValues().isEmpty()) {
                 removeNode(node);
@@ -134,7 +134,7 @@ public class BinaryTree<K extends Comparable<K>, V> {
             root = null;
         } else {
             BinaryTreeNode<K, V> parent = node.getParent();
-            if (node.equals(parent.getLeft())) {
+            if (node == parent.getLeft()) {
                 parent.setLeft(null);
             } else {
                 parent.setRight(null);
@@ -155,7 +155,7 @@ public class BinaryTree<K extends Comparable<K>, V> {
             child.setParent(null);
         } else {
             BinaryTreeNode<K, V> parent = node.getParent();
-            if (node.equals(parent.getLeft())) {
+            if (node == parent.getLeft()) {
                 parent.setLeft(child);
             } else {
                 parent.setRight(child);
@@ -324,8 +324,8 @@ public class BinaryTree<K extends Comparable<K>, V> {
     private void rotate(BinaryTreeNode<K, V> subtreeRoot, Direction rotateDirection) {
         BinaryTreeNode<K, V> parent = subtreeRoot.getParent();
         boolean isRoot = parent == null;
-        boolean isLeftChild = !isRoot && subtreeRoot.equals(parent.getLeft());
-        boolean isRightChild = !isRoot && subtreeRoot.equals(parent.getRight());
+        boolean isLeftChild = !isRoot && subtreeRoot == parent.getLeft();
+        boolean isRightChild = !isRoot && subtreeRoot == parent.getRight();
         BinaryTreeNode<K, V> newSubtreeRoot;
 
         switch (rotateDirection) {

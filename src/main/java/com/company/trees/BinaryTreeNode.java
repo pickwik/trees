@@ -1,6 +1,5 @@
 package com.company.trees;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,13 +8,10 @@ import java.util.Set;
 
 @Getter
 @Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class BinaryTreeNode<K, V> {
 
     private BinaryTreeNode<K, V> parent;
-    @EqualsAndHashCode.Include
     private K key;
-    @EqualsAndHashCode.Include
     private Set<V> values;
 
     private BinaryTreeNode<K, V> right;
