@@ -1,4 +1,4 @@
-package com.company.trees;
+package com.company.trees.avl;
 
 import lombok.Getter;
 import lombok.Setter;

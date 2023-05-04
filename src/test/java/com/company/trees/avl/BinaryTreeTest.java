@@ -1,4 +1,4 @@
-package com.company.trees;
+package com.company.trees.avl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;

@@ -1,4 +1,6 @@
-package com.company.trees;
+package com.company.trees.util;
+
+import com.company.trees.avl.BinaryTreeNode;
 
 import java.util.Comparator;
 import java.util.HashMap;

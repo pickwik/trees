@@ -1,4 +1,4 @@
-package com.company.trees;
+package com.company.trees.util;
 
 public enum Direction {
 

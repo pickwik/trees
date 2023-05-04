@@ -1,13 +1,15 @@
-package com.company.trees;
+package com.company.trees.avl;
 
+import com.company.trees.util.Direction;
+import com.company.trees.util.TreePrinter;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.company.trees.Direction.LEFT;
-import static com.company.trees.Direction.RIGHT;
+import static com.company.trees.util.Direction.LEFT;
+import static com.company.trees.util.Direction.RIGHT;
 
 public class BinaryTree<K extends Comparable<K>, V> {
 

@@ -1,5 +1,7 @@
 package com.company.trees;
 
+import com.company.trees.avl.BinaryTree;
+
 public class Main {
 
     public static void main(String[] args) {
