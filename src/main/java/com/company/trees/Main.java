@@ -56,11 +56,11 @@ public class Main {
         System.out.println("removed 17");
         binaryTree.printTree();
         try {
-            binaryTree.remove("4", false);
+            binaryTree.removeValue("4", false);
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
-        binaryTree.remove("4");
+        binaryTree.removeValue("4");
         System.out.println("removed all with value 4");
         binaryTree.printTree();
     }

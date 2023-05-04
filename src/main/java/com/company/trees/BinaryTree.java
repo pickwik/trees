@@ -63,15 +63,15 @@ public class BinaryTree<K extends Comparable<K>, V> {
         }
     }
 
-    public void remove(V value) {
-        remove(value, true);
+    public void removeValue(V value) {
+        removeValue(value, true);
     }
 
-    public void remove(V value, boolean removeAll) {
+    public void removeValue(V value, boolean removeFromAll) {
         if (root != null) {
-            List<BinaryTreeNode<K, V>> nodesToRemove = search(value);
-            if (nodesToRemove.size() > 1 && !removeAll) {
-                throw new RuntimeException("Multiple nodes found, but 'removeAll' flag is false");
+            List<BinaryTreeNode<K, V>> nodesToRemove = searchValue(value);
+            if (nodesToRemove.size() > 1 && !removeFromAll) {
+                throw new RuntimeException("Multiple nodes found, but 'removeFromAll' flag is false");
             }
             if (!nodesToRemove.isEmpty()) {
                 nodesToRemove.forEach(nodeToRemove -> removeByValueAndBalanceRecursive(root, value, nodeToRemove));
@@ -196,7 +196,7 @@ public class BinaryTree<K extends Comparable<K>, V> {
     /**
      * Find all nodes containing specified value.
      */
-    public List<BinaryTreeNode<K, V>> search(V value) {
+    public List<BinaryTreeNode<K, V>> searchValue(V value) {
         if (root == null) {
             return Collections.emptyList();
         }
@@ -210,6 +210,9 @@ public class BinaryTree<K extends Comparable<K>, V> {
      */
     public BinaryTreeNode<K, V> search(K key, V value) {
         BinaryTreeNode<K, V> nodeWithSameKey = search(key);
+        if (nodeWithSameKey == null) {
+            return null;
+        }
         if (nodeWithSameKey.getValues().contains(value)) {
             return nodeWithSameKey;
         }
