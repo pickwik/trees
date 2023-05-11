@@ -1087,4 +1087,17 @@ public class BinaryTreeTest {
         // then
         assertTrue(isNodeExists);
     }
+
+    @Test
+    void getDepth() {
+        // given
+        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        tree.add(0, "a");
+
+        // when
+        var actualDepth = tree.getDepth();
+
+        // then
+        assertEquals(0, actualDepth);
+    }
 }

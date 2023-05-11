@@ -1,7 +1,6 @@
 package com.company.trees.avl;
 
 import com.company.trees.util.Direction;
-import com.company.trees.util.TreePrinter;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -254,12 +253,6 @@ public class BinaryTree<K extends Comparable<K>, V> {
     }
 
 
-    public void printTree() {
-        long treeDepth = calculateDepthRecursive(root);
-        new TreePrinter<>(root, treeDepth).print();
-    }
-
-
     public boolean exists(K key, V value) {
         return search(key, value) != null;
     }
@@ -307,6 +300,11 @@ public class BinaryTree<K extends Comparable<K>, V> {
                 rotate(node, RIGHT);
             }
         }
+    }
+
+
+    public long getDepth() {
+        return calculateDepthRecursive(root);
     }
 
     private long calculateDepthRecursive(BinaryTreeNode<K, V> node) {

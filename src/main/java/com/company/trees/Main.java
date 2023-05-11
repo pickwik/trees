@@ -1,6 +1,7 @@
 package com.company.trees;
 
 import com.company.trees.avl.BinaryTree;
+import com.company.trees.util.TreePrinter;
 
 public class Main {
 
@@ -9,54 +10,54 @@ public class Main {
         binaryTree.add(4,"4");
         binaryTree.add(4,"1");
         System.out.println("added 4");
-        binaryTree.printTree();
+        TreePrinter.print(binaryTree);
         binaryTree.add(6,"4");
         System.out.println("added 6");
-        binaryTree.printTree();
+        TreePrinter.print(binaryTree);
         binaryTree.add(5,"4");
         System.out.println("added 5");
-        binaryTree.printTree();
+        TreePrinter.print(binaryTree);
         binaryTree.add(7,"4");
         System.out.println("added 7");
-        binaryTree.printTree();
+        TreePrinter.print(binaryTree);
         binaryTree.add(2,"4");
         System.out.println("added 2");
-        binaryTree.printTree();
+        TreePrinter.print(binaryTree);
         binaryTree.add(3,"4");
         System.out.println("added 3");
-        binaryTree.printTree();
+        TreePrinter.print(binaryTree);
         binaryTree.add(1,"4");
         System.out.println("added 1");
-        binaryTree.printTree();
+        TreePrinter.print(binaryTree);
         binaryTree.add(15,"4");
         System.out.println("added 15");
-        binaryTree.printTree();
+        TreePrinter.print(binaryTree);
         binaryTree.add(8,"4");
         System.out.println("added 8");
-        binaryTree.printTree();
+        TreePrinter.print(binaryTree);
         binaryTree.add(17,"4");
         System.out.println("added 17");
-        binaryTree.printTree();
+        TreePrinter.print(binaryTree);
         binaryTree.add(-2,"4");
         binaryTree.add(-2,"1");
         System.out.println("added -2");
-        binaryTree.printTree();
+        TreePrinter.print(binaryTree);
         binaryTree.add(-5,"4");
         System.out.println("added -5");
-        binaryTree.printTree();
+        TreePrinter.print(binaryTree);
 
         binaryTree.remove(6);
         System.out.println("removed 6");
-        binaryTree.printTree();
+        TreePrinter.print(binaryTree);
         binaryTree.remove(5);
         System.out.println("removed 5");
-        binaryTree.printTree();
+        TreePrinter.print(binaryTree);
         binaryTree.remove(7);
         System.out.println("removed 7");
-        binaryTree.printTree();
+        TreePrinter.print(binaryTree);
         binaryTree.remove(17);
         System.out.println("removed 17");
-        binaryTree.printTree();
+        TreePrinter.print(binaryTree);
         try {
             binaryTree.removeValue("4", false);
         } catch (RuntimeException e) {
@@ -64,7 +65,7 @@ public class Main {
         }
         binaryTree.removeValue("4");
         System.out.println("removed all with value 4");
-        binaryTree.printTree();
+        TreePrinter.print(binaryTree);
     }
 
 }
