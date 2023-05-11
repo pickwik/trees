@@ -1,7 +1,7 @@
 package com.company.trees.util;
 
-import com.company.trees.avl.BinaryTree;
-import com.company.trees.avl.BinaryTreeNode;
+import com.company.trees.avl.AvlTree;
+import com.company.trees.avl.AvlTreeNode;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -13,11 +13,11 @@ public final class TreePrinter {
     private static final long PLACEHOLDER_LENGTH = 2; // hardcoded for now
 
 
-    public static void print(BinaryTree<?, ?> tree) {
+    public static void print(AvlTree<?, ?> tree) {
         // init
-        BinaryTreeNode<?, ?> root = tree.getRoot();
+        AvlTreeNode<?, ?> root = tree.getRoot();
         long treeDepth = tree.getDepth();
-        Map<BinaryTreeNode<?, ?>, Long> nodeLevelsMap = new HashMap<>();
+        Map<AvlTreeNode<?, ?>, Long> nodeLevelsMap = new HashMap<>();
         initNodeLevelsMapRecursive(nodeLevelsMap, root, 0);
         Map<Long, StringBuilder> levelStringBuildersMap = new HashMap<>();
         initLevelStringBuildersMapWithMargins(levelStringBuildersMap, treeDepth);
@@ -36,11 +36,11 @@ public final class TreePrinter {
                 .forEach(entry -> System.out.println(entry.getKey() + "\t" + entry.getValue().toString()));
     }
 
-    private static void walkthrough(BinaryTreeNode<?, ?> node,
-                                    Map<BinaryTreeNode<?, ?>, Long> nodeLevelsMap,
+    private static void walkthrough(AvlTreeNode<?, ?> node,
+                                    Map<AvlTreeNode<?, ?>, Long> nodeLevelsMap,
                                     Map<Long, StringBuilder> levelStringBuildersMap,
                                     long treeDepth,
-                                    Consumer<BinaryTreeNode<?, ?>> function) {
+                                    Consumer<AvlTreeNode<?, ?>> function) {
         function.accept(node); // visit node
 
         long level = nodeLevelsMap.get(node);
@@ -58,7 +58,7 @@ public final class TreePrinter {
         }
     }
 
-    private static void initNodeLevelsMapRecursive(Map<BinaryTreeNode<?, ?>, Long> nodeLevelsMap, BinaryTreeNode<?, ?> node, long level) {
+    private static void initNodeLevelsMapRecursive(Map<AvlTreeNode<?, ?>, Long> nodeLevelsMap, AvlTreeNode<?, ?> node, long level) {
         nodeLevelsMap.put(node, level++);
 
         if (node.getLeft() != null) {

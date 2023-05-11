@@ -8,17 +8,17 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class BinaryTreeNode<K, V> {
+public class AvlTreeNode<K, V> {
 
-    private BinaryTreeNode<K, V> parent;
+    private AvlTreeNode<K, V> parent;
     private K key;
     private Set<V> values;
 
-    private BinaryTreeNode<K, V> right;
-    private BinaryTreeNode<K, V> left;
+    private AvlTreeNode<K, V> right;
+    private AvlTreeNode<K, V> left;
 
 
-    public BinaryTreeNode(BinaryTreeNode<K, V> parent, K key, V value) {
+    public AvlTreeNode(AvlTreeNode<K, V> parent, K key, V value) {
         this.parent = parent;
         this.key = key;
         values = new HashSet<>();

@@ -14,14 +14,14 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BinaryTreeTest {
+public class AvlTreeTest {
 
     @Test
     void addOneNode() {
         // given
         int testKey = 0;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
 
         // when
         tree.add(testKey, testValue);
@@ -43,7 +43,7 @@ public class BinaryTreeTest {
         // given
         Integer testKey = null;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
 
         // when
         Executable add = () -> tree.add(testKey, testValue);
@@ -58,7 +58,7 @@ public class BinaryTreeTest {
         // given
         int testKey = 0;
         List<String> testValues = List.of("a", "b");
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
 
         // when
         tree.add(testKey, testValues.get(0));
@@ -82,7 +82,7 @@ public class BinaryTreeTest {
         int testKey1 = 0;
         int testKey2 = -1;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
 
         // when
         tree.add(testKey1, testValue);
@@ -108,7 +108,7 @@ public class BinaryTreeTest {
         int testKey1 = 0;
         int testKey2 = 1;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
 
         // when
         tree.add(testKey1, testValue);
@@ -135,7 +135,7 @@ public class BinaryTreeTest {
         int testKey2 = 1;
         int testKey3 = 2;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
 
         // when
         tree.add(testKey1, testValue);
@@ -166,7 +166,7 @@ public class BinaryTreeTest {
         int testKey2 = 1;
         int testKey3 = 2;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
 
         // when
         tree.add(testKey1, testValue);
@@ -197,7 +197,7 @@ public class BinaryTreeTest {
         int testKey2 = 1;
         int testKey3 = 2;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
 
         // when
         tree.add(testKey3, testValue);
@@ -228,7 +228,7 @@ public class BinaryTreeTest {
         int testKey2 = 1;
         int testKey3 = 2;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
 
         // when
         tree.add(testKey3, testValue);
@@ -262,7 +262,7 @@ public class BinaryTreeTest {
         int testKey5 = 3;
         int testKey6 = 4;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
 
         // when
         tree.add(testKey1, testValue);
@@ -311,7 +311,7 @@ public class BinaryTreeTest {
         int testKey5 = -1;
         int testKey6 = -4;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
 
         // when
         tree.add(testKey1, testValue);
@@ -354,7 +354,7 @@ public class BinaryTreeTest {
     @Test
     void searchByKeyInEmptyTree() {
         // given
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
 
         // when
         var foundNode = tree.search(0);
@@ -368,7 +368,7 @@ public class BinaryTreeTest {
         // given
         int testKey = 0;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey, testValue);
 
         // when
@@ -385,7 +385,7 @@ public class BinaryTreeTest {
         int testKey1 = 0;
         int testKey2 = -1;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValue);
         tree.add(testKey2, testValue);
 
@@ -403,7 +403,7 @@ public class BinaryTreeTest {
         int testKey1 = 0;
         int testKey2 = 1;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValue);
         tree.add(testKey2, testValue);
 
@@ -418,7 +418,7 @@ public class BinaryTreeTest {
     @Test
     void searchByValueInEmptyTree() {
         // given
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
 
         // when
         var foundNodes = tree.searchValue("a");
@@ -434,7 +434,7 @@ public class BinaryTreeTest {
         int testKey2 = -1;
         int testKey3 = 1;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValue);
         tree.add(testKey2, testValue);
         tree.add(testKey3, testValue);
@@ -473,7 +473,7 @@ public class BinaryTreeTest {
     @Test
     void searchByKeyAndValueInEmptyTree() {
         // given
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
 
         // when
         var foundNode = tree.search(0, "a");
@@ -487,7 +487,7 @@ public class BinaryTreeTest {
         // given
         int testKey = 0;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey, testValue);
 
         // when
@@ -502,7 +502,7 @@ public class BinaryTreeTest {
         // given
         int testKey = 0;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey, testValue);
 
         // when
@@ -518,7 +518,7 @@ public class BinaryTreeTest {
         int testKey1 = 0;
         int testKey2 = 1;
         List<String> testValues = List.of("a", "b");
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValues.get(0));
         tree.add(testKey1, testValues.get(1));
         tree.add(testKey2, testValues.get(0));
@@ -540,7 +540,7 @@ public class BinaryTreeTest {
         // given
         int testKey = 0;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey, testValue);
 
         // when
@@ -556,7 +556,7 @@ public class BinaryTreeTest {
         int testKey1 = 0;
         int testKey2 = -1;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValue);
         tree.add(testKey2, testValue);
 
@@ -580,7 +580,7 @@ public class BinaryTreeTest {
         int testKey1 = 0;
         int testKey2 = 1;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValue);
         tree.add(testKey2, testValue);
 
@@ -604,7 +604,7 @@ public class BinaryTreeTest {
         int testKey1 = 0;
         int testKey2 = -1;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValue);
         tree.add(testKey2, testValue);
 
@@ -628,7 +628,7 @@ public class BinaryTreeTest {
         int testKey1 = 0;
         int testKey2 = 1;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValue);
         tree.add(testKey2, testValue);
 
@@ -654,7 +654,7 @@ public class BinaryTreeTest {
         int testKey3 = -1;
         int testKey4 = -2;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValue);
         tree.add(testKey2, testValue);
         tree.add(testKey3, testValue);
@@ -688,7 +688,7 @@ public class BinaryTreeTest {
         int testKey3 = -2;
         int testKey4 = -1;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValue);
         tree.add(testKey2, testValue);
         tree.add(testKey3, testValue);
@@ -722,7 +722,7 @@ public class BinaryTreeTest {
         int testKey3 = 2;
         int testKey4 = 1;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValue);
         tree.add(testKey2, testValue);
         tree.add(testKey3, testValue);
@@ -756,7 +756,7 @@ public class BinaryTreeTest {
         int testKey3 = 1;
         int testKey4 = 2;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValue);
         tree.add(testKey2, testValue);
         tree.add(testKey3, testValue);
@@ -791,7 +791,7 @@ public class BinaryTreeTest {
         int testKey4 = 1;
         int testKey5 = 3;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValue);
         tree.add(testKey2, testValue);
         tree.add(testKey3, testValue);
@@ -833,7 +833,7 @@ public class BinaryTreeTest {
         int testKey6 = 5;
         int testKey7 = 4;
         String testValue = "a";
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValue);
         tree.add(testKey2, testValue);
         tree.add(testKey3, testValue);
@@ -880,7 +880,7 @@ public class BinaryTreeTest {
         int testKey1 = 0;
         int testKey2 = 1;
         List<String> testValues = List.of("a", "b");
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValues.get(0));
         tree.add(testKey1, testValues.get(1));
         tree.add(testKey2, testValues.get(0));
@@ -899,7 +899,7 @@ public class BinaryTreeTest {
         int testKey1 = 0;
         int testKey2 = 1;
         List<String> testValues = List.of("a", "b");
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValues.get(0));
         tree.add(testKey1, testValues.get(1));
         tree.add(testKey2, testValues.get(0));
@@ -929,7 +929,7 @@ public class BinaryTreeTest {
         int testKey1 = 0;
         int testKey2 = 1;
         List<String> testValues = List.of("a", "b");
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValues.get(0));
         tree.add(testKey2, testValues.get(0));
         tree.add(testKey2, testValues.get(1));
@@ -953,7 +953,7 @@ public class BinaryTreeTest {
         int testKey1 = 0;
         int testKey2 = -1;
         List<String> testValues = List.of("a", "b");
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValues.get(0));
         tree.add(testKey2, testValues.get(0));
         tree.add(testKey2, testValues.get(1));
@@ -983,7 +983,7 @@ public class BinaryTreeTest {
         int testKey1 = 0;
         int testKey2 = 1;
         List<String> testValues = List.of("a", "b");
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(testKey1, testValues.get(0));
         tree.add(testKey2, testValues.get(0));
         tree.add(testKey2, testValues.get(1));
@@ -1011,7 +1011,7 @@ public class BinaryTreeTest {
     @Test
     void getSizeOfEmptyTree() {
         // given
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
 
         // when
         var actualSize = tree.size();
@@ -1023,7 +1023,7 @@ public class BinaryTreeTest {
     @Test
     void getSizeOfTreeWithRootNode() {
         // given
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(0, "a");
 
         // when
@@ -1036,7 +1036,7 @@ public class BinaryTreeTest {
     @Test
     void getSizeOfTreeWithRootNodeAndLeftChild() {
         // given
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(0, "a");
         tree.add(-1, "a");
 
@@ -1050,7 +1050,7 @@ public class BinaryTreeTest {
     @Test
     void getSizeOfTreeWithRootNodeAndRightChild() {
         // given
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(0, "a");
         tree.add(1, "a");
 
@@ -1065,7 +1065,7 @@ public class BinaryTreeTest {
     @Test
     void checkNodeNotExists() {
         // given
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(0, "a");
 
         // when
@@ -1078,7 +1078,7 @@ public class BinaryTreeTest {
     @Test
     void checkNodeExists() {
         // given
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(0, "a");
 
         // when
@@ -1091,7 +1091,7 @@ public class BinaryTreeTest {
     @Test
     void getDepth() {
         // given
-        BinaryTree<Integer, String> tree = new BinaryTree<>();
+        AvlTree<Integer, String> tree = new AvlTree<>();
         tree.add(0, "a");
 
         // when

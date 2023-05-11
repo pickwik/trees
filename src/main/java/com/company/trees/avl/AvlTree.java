@@ -10,13 +10,13 @@ import java.util.List;
 import static com.company.trees.util.Direction.LEFT;
 import static com.company.trees.util.Direction.RIGHT;
 
-public class BinaryTree<K extends Comparable<K>, V> {
+public class AvlTree<K extends Comparable<K>, V> {
 
     @Getter
-    private BinaryTreeNode<K, V> root;
+    private AvlTreeNode<K, V> root;
 
 
-    public BinaryTree() {
+    public AvlTree() {
         this.root = null;
     }
 
@@ -27,13 +27,13 @@ public class BinaryTree<K extends Comparable<K>, V> {
         }
 
         if (root == null) {
-            root = new BinaryTreeNode<>(null, key, value);
+            root = new AvlTreeNode<>(null, key, value);
         } else {
             addAndBalanceRecursive(root, key, value);
         }
     }
 
-    private void addAndBalanceRecursive(BinaryTreeNode<K, V> node, K key, V value) {
+    private void addAndBalanceRecursive(AvlTreeNode<K, V> node, K key, V value) {
         K nodeKey = node.getKey();
         if (key.compareTo(nodeKey) == 0) {
             node.addValue(value);
@@ -43,14 +43,14 @@ public class BinaryTree<K extends Comparable<K>, V> {
                 if (node.getLeft() != null) {
                     addAndBalanceRecursive(node.getLeft(), key, value);
                 } else {
-                    node.setLeft(new BinaryTreeNode<>(node, key, value));
+                    node.setLeft(new AvlTreeNode<>(node, key, value));
                 }
             } else if (key.compareTo(nodeKey) > 0) {
                 // go right
                 if (node.getRight() != null) {
                     addAndBalanceRecursive(node.getRight(), key, value);
                 } else {
-                    node.setRight(new BinaryTreeNode<>(node, key, value));
+                    node.setRight(new AvlTreeNode<>(node, key, value));
                 }
             }
             balance(node);
@@ -70,7 +70,7 @@ public class BinaryTree<K extends Comparable<K>, V> {
 
     public void removeValue(V value, boolean removeFromAll) {
         if (root != null) {
-            List<BinaryTreeNode<K, V>> nodesToRemove = searchValue(value);
+            List<AvlTreeNode<K, V>> nodesToRemove = searchValue(value);
             if (nodesToRemove.size() > 1 && !removeFromAll) {
                 throw new RuntimeException("Multiple nodes found, but 'removeFromAll' flag is false");
             }
@@ -80,7 +80,7 @@ public class BinaryTree<K extends Comparable<K>, V> {
         }
     }
 
-    private void removeByKeyAndBalanceRecursive(BinaryTreeNode<K, V> node, K key) {
+    private void removeByKeyAndBalanceRecursive(AvlTreeNode<K, V> node, K key) {
         K nodeKey = node.getKey();
         if (key.compareTo(nodeKey) == 0) {
             removeNode(node);
@@ -100,7 +100,7 @@ public class BinaryTree<K extends Comparable<K>, V> {
         }
     }
 
-    private void removeByValueAndBalanceRecursive(BinaryTreeNode<K,V> node, V value, BinaryTreeNode<K, V> nodeToRemove) {
+    private void removeByValueAndBalanceRecursive(AvlTreeNode<K,V> node, V value, AvlTreeNode<K, V> nodeToRemove) {
         if (nodeToRemove == node) {
             node.removeValue(value);
             if (node.getValues().isEmpty()) {
@@ -117,7 +117,7 @@ public class BinaryTree<K extends Comparable<K>, V> {
         balance(node);
     }
 
-    private void removeNode(BinaryTreeNode<K, V> node) {
+    private void removeNode(AvlTreeNode<K, V> node) {
         if (node == null) {
             return;
         }
@@ -130,11 +130,11 @@ public class BinaryTree<K extends Comparable<K>, V> {
         }
     }
 
-    private void removeNodeWithoutChildNodes(BinaryTreeNode<K, V> node, boolean isRoot) {
+    private void removeNodeWithoutChildNodes(AvlTreeNode<K, V> node, boolean isRoot) {
         if (isRoot) {
             root = null;
         } else {
-            BinaryTreeNode<K, V> parent = node.getParent();
+            AvlTreeNode<K, V> parent = node.getParent();
             if (node == parent.getLeft()) {
                 parent.setLeft(null);
             } else {
@@ -143,8 +143,8 @@ public class BinaryTree<K extends Comparable<K>, V> {
         }
     }
 
-    private void removeNodeWithOneChildNode(BinaryTreeNode<K, V> node, boolean isRoot) {
-        BinaryTreeNode<K, V> child;
+    private void removeNodeWithOneChildNode(AvlTreeNode<K, V> node, boolean isRoot) {
+        AvlTreeNode<K, V> child;
         if (node.getLeft() != null) {
             child = node.getLeft();
         } else {
@@ -155,7 +155,7 @@ public class BinaryTree<K extends Comparable<K>, V> {
             root = child;
             child.setParent(null);
         } else {
-            BinaryTreeNode<K, V> parent = node.getParent();
+            AvlTreeNode<K, V> parent = node.getParent();
             if (node == parent.getLeft()) {
                 parent.setLeft(child);
             } else {
@@ -165,14 +165,14 @@ public class BinaryTree<K extends Comparable<K>, V> {
         }
     }
 
-    private void removeNodeWithTwoChildNodes(BinaryTreeNode<K, V> node) {
-        BinaryTreeNode<K, V> replacingNode = removeSmallestAndBalanceRecursive(node.getRight());
+    private void removeNodeWithTwoChildNodes(AvlTreeNode<K, V> node) {
+        AvlTreeNode<K, V> replacingNode = removeSmallestAndBalanceRecursive(node.getRight());
         node.setKey(replacingNode.getKey());
         node.setValues(replacingNode.getValues());
     }
 
-    private BinaryTreeNode<K, V> removeSmallestAndBalanceRecursive(BinaryTreeNode<K, V> node) {
-        BinaryTreeNode<K, V> removedNode;
+    private AvlTreeNode<K, V> removeSmallestAndBalanceRecursive(AvlTreeNode<K, V> node) {
+        AvlTreeNode<K, V> removedNode;
         if (node.getLeft() == null) {
             removeNode(node);
             removedNode = node;
@@ -187,7 +187,7 @@ public class BinaryTree<K extends Comparable<K>, V> {
     /**
      * Find node by specified key.
      */
-    public BinaryTreeNode<K, V> search(K key) {
+    public AvlTreeNode<K, V> search(K key) {
         if (root == null) {
             return null;
         }
@@ -197,11 +197,11 @@ public class BinaryTree<K extends Comparable<K>, V> {
     /**
      * Find all nodes containing specified value.
      */
-    public List<BinaryTreeNode<K, V>> searchValue(V value) {
+    public List<AvlTreeNode<K, V>> searchValue(V value) {
         if (root == null) {
             return Collections.emptyList();
         }
-        List<BinaryTreeNode<K, V>> foundNodes = new ArrayList<>();
+        List<AvlTreeNode<K, V>> foundNodes = new ArrayList<>();
         searchByValueRecursive(root, value, foundNodes);
         return foundNodes;
     }
@@ -209,8 +209,8 @@ public class BinaryTree<K extends Comparable<K>, V> {
     /**
      * Find node by specified key and value.
      */
-    public BinaryTreeNode<K, V> search(K key, V value) {
-        BinaryTreeNode<K, V> nodeWithSameKey = search(key);
+    public AvlTreeNode<K, V> search(K key, V value) {
+        AvlTreeNode<K, V> nodeWithSameKey = search(key);
         if (nodeWithSameKey == null) {
             return null;
         }
@@ -220,7 +220,7 @@ public class BinaryTree<K extends Comparable<K>, V> {
         return null;
     }
 
-    private BinaryTreeNode<K, V> searchByKeyRecursive(BinaryTreeNode<K, V> node, K key) {
+    private AvlTreeNode<K, V> searchByKeyRecursive(AvlTreeNode<K, V> node, K key) {
         K nodeKey = node.getKey();
         if (nodeKey.compareTo(key) == 0) {
             return node;
@@ -240,7 +240,7 @@ public class BinaryTree<K extends Comparable<K>, V> {
         return null;
     }
 
-    private void searchByValueRecursive(BinaryTreeNode<K, V> node, V value, List<BinaryTreeNode<K, V>> foundNodes) {
+    private void searchByValueRecursive(AvlTreeNode<K, V> node, V value, List<AvlTreeNode<K, V>> foundNodes) {
         if (node.hasValue(value)) {
             foundNodes.add(node);
         }
@@ -265,7 +265,7 @@ public class BinaryTree<K extends Comparable<K>, V> {
         return calculateSizeRecursive(root);
     }
 
-    private long calculateSizeRecursive(BinaryTreeNode<K, V> node) {
+    private long calculateSizeRecursive(AvlTreeNode<K, V> node) {
         long size = 1;
         if (node.getLeft() != null) {
             size += calculateSizeRecursive(node.getLeft());
@@ -277,7 +277,7 @@ public class BinaryTree<K extends Comparable<K>, V> {
     }
 
 
-    private void balance(BinaryTreeNode<K, V> node) {
+    private void balance(AvlTreeNode<K, V> node) {
         long bf = calculateBalanceFactor(node);
         if (bf > 1) {
             long bfRightChild = calculateBalanceFactor(node.getRight());
@@ -307,7 +307,7 @@ public class BinaryTree<K extends Comparable<K>, V> {
         return calculateDepthRecursive(root);
     }
 
-    private long calculateDepthRecursive(BinaryTreeNode<K, V> node) {
+    private long calculateDepthRecursive(AvlTreeNode<K, V> node) {
         if (node == null) {
             return -1;
         }
@@ -316,7 +316,7 @@ public class BinaryTree<K extends Comparable<K>, V> {
         return Math.max(lDepth, rDepth) + 1;
     }
 
-    private long calculateBalanceFactor(BinaryTreeNode<K, V> node) {
+    private long calculateBalanceFactor(AvlTreeNode<K, V> node) {
         if (node == null) {
             return -1;
         } else {
@@ -324,12 +324,12 @@ public class BinaryTree<K extends Comparable<K>, V> {
         }
     }
 
-    private void rotate(BinaryTreeNode<K, V> subtreeRoot, Direction rotateDirection) {
-        BinaryTreeNode<K, V> parent = subtreeRoot.getParent();
+    private void rotate(AvlTreeNode<K, V> subtreeRoot, Direction rotateDirection) {
+        AvlTreeNode<K, V> parent = subtreeRoot.getParent();
         boolean isRoot = parent == null;
         boolean isLeftChild = !isRoot && subtreeRoot == parent.getLeft();
         boolean isRightChild = !isRoot && subtreeRoot == parent.getRight();
-        BinaryTreeNode<K, V> newSubtreeRoot;
+        AvlTreeNode<K, V> newSubtreeRoot;
 
         switch (rotateDirection) {
             case LEFT -> newSubtreeRoot = leftRotate(subtreeRoot);
@@ -351,9 +351,9 @@ public class BinaryTree<K extends Comparable<K>, V> {
         }
     }
 
-    private BinaryTreeNode<K, V> leftRotate(BinaryTreeNode<K, V> oldSubtreeRoot) {
-        BinaryTreeNode<K, V> newSubtreeRoot = oldSubtreeRoot.getRight();
-        BinaryTreeNode<K, V> rightChildForOldSubtreeRoot = newSubtreeRoot.getLeft();
+    private AvlTreeNode<K, V> leftRotate(AvlTreeNode<K, V> oldSubtreeRoot) {
+        AvlTreeNode<K, V> newSubtreeRoot = oldSubtreeRoot.getRight();
+        AvlTreeNode<K, V> rightChildForOldSubtreeRoot = newSubtreeRoot.getLeft();
 
         newSubtreeRoot.setLeft(oldSubtreeRoot);
         oldSubtreeRoot.setParent(newSubtreeRoot);
@@ -366,9 +366,9 @@ public class BinaryTree<K extends Comparable<K>, V> {
         return newSubtreeRoot;
     }
 
-    private BinaryTreeNode<K, V> rightRotate(BinaryTreeNode<K, V> oldSubtreeRoot) {
-        BinaryTreeNode<K, V> newSubtreeRoot = oldSubtreeRoot.getLeft();
-        BinaryTreeNode<K, V> leftChildForOldSubtreeRoot = newSubtreeRoot.getRight();
+    private AvlTreeNode<K, V> rightRotate(AvlTreeNode<K, V> oldSubtreeRoot) {
+        AvlTreeNode<K, V> newSubtreeRoot = oldSubtreeRoot.getLeft();
+        AvlTreeNode<K, V> leftChildForOldSubtreeRoot = newSubtreeRoot.getRight();
 
         newSubtreeRoot.setRight(oldSubtreeRoot);
         oldSubtreeRoot.setParent(newSubtreeRoot);
@@ -381,7 +381,7 @@ public class BinaryTree<K extends Comparable<K>, V> {
         return newSubtreeRoot;
     }
 
-    private int countChildNodes(BinaryTreeNode<K, V> node) {
+    private int countChildNodes(AvlTreeNode<K, V> node) {
         if (node.getLeft() == null && node.getRight() == null) {
             return 0;
         } else if (node.getLeft() != null && node.getRight() != null) {
