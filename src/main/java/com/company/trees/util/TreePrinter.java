@@ -20,14 +20,14 @@ public final class TreePrinter {
         Map<AvlTreeNode<?, ?>, Long> nodeLevelsMap = new HashMap<>();
         initNodeLevelsMapRecursive(nodeLevelsMap, root, 0);
         Map<Long, StringBuilder> levelStringBuildersMap = new HashMap<>();
-        initLevelStringBuildersMapWithMargins(levelStringBuildersMap, treeDepth);
+        initLevelStringBuildersMapWithLeftOffset(levelStringBuildersMap, treeDepth);
 
         // fill lines
         walkthrough(root, nodeLevelsMap, levelStringBuildersMap, treeDepth, node -> {
             long level = nodeLevelsMap.get(node);
             StringBuilder thisLevelStringBuilder = levelStringBuildersMap.get(level);
             thisLevelStringBuilder.append(String.format("%02d", node.getKey()))
-                    .append(multiply(" ", calculatePadding(treeDepth - level) * PLACEHOLDER_LENGTH));
+                    .append(multiply(" ", (calculateRightOffset(treeDepth - level) - 1) * PLACEHOLDER_LENGTH));
         });
 
         // print lines
@@ -48,13 +48,13 @@ public final class TreePrinter {
         if (node.getLeft() != null) {
             walkthrough(node.getLeft(), nodeLevelsMap, levelStringBuildersMap, treeDepth, function);
         } else if (level < treeDepth) {
-            addPaddingsInsteadOfNullNodes(level + 1, levelStringBuildersMap, treeDepth);
+            addRightOffsetInsteadOfNullNodes(level + 1, levelStringBuildersMap, treeDepth);
         }
 
         if (node.getRight() != null) {
             walkthrough(node.getRight(), nodeLevelsMap, levelStringBuildersMap, treeDepth, function);
         } else if (level < treeDepth) {
-            addPaddingsInsteadOfNullNodes(level + 1, levelStringBuildersMap, treeDepth);
+            addRightOffsetInsteadOfNullNodes(level + 1, levelStringBuildersMap, treeDepth);
         }
     }
 
@@ -69,33 +69,31 @@ public final class TreePrinter {
         }
     }
 
-    private static void initLevelStringBuildersMapWithMargins(Map<Long, StringBuilder> levelStringBuildersMap, long treeDepth) {
+    private static void initLevelStringBuildersMapWithLeftOffset(Map<Long, StringBuilder> levelStringBuildersMap, long treeDepth) {
         for (long i = 0; i < treeDepth; i++) {
             StringBuilder sb = new StringBuilder();
-            long margin = calculatePadding((treeDepth - i) - 1); // margin for current level == padding for next level
-            sb.append(multiply(" ", margin * PLACEHOLDER_LENGTH));
+            long invertedLevel = treeDepth - i;
+            long leftOffset = calculateRightOffset(invertedLevel - 1) - 1; // leftOffset for current level == rightOffset for next level - 1 element
+            sb.append(multiply(" ", leftOffset * PLACEHOLDER_LENGTH));
             levelStringBuildersMap.put(i, sb);
         }
-        levelStringBuildersMap.put(treeDepth, new StringBuilder()); // no margin for last level
+        levelStringBuildersMap.put(treeDepth, new StringBuilder()); // no leftOffset for last level
     }
 
-    private static void addPaddingsInsteadOfNullNodes(long levelOfNullNode,
-                                                      Map<Long, StringBuilder> levelStringBuildersMap,
-                                                      long treeDepth) {
+    private static void addRightOffsetInsteadOfNullNodes(long levelOfNullNode,
+                                                         Map<Long, StringBuilder> levelStringBuildersMap,
+                                                         long treeDepth) {
         long childMultiplier = 1;
         for (long i = levelOfNullNode; i <= treeDepth; i++) {
             StringBuilder sb = levelStringBuildersMap.get(i);
-            long padding = (1 + calculatePadding(treeDepth - i)) * childMultiplier; // (node itself + padding for current level) * number of possible nodes in following subtrees
-            sb.append(multiply(" ", padding * PLACEHOLDER_LENGTH));
+            long rightOffset = calculateRightOffset(treeDepth - i) * childMultiplier; // rightOffset for current level * number of possible nodes in following subtrees
+            sb.append(multiply(" ", rightOffset * PLACEHOLDER_LENGTH));
             childMultiplier *= 2;
         }
     }
 
-    private static long calculatePadding(long invertedLevel) {
-        if (invertedLevel == 0) {
-            return 1;
-        }
-        return calculatePadding(invertedLevel - 1) * 2 + 1;
+    private static long calculateRightOffset(long invertedLevel) {
+        return (long)Math.pow(2, invertedLevel + 1);
     }
 
     private static String multiply(String string, long times) {
